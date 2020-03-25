@@ -6,7 +6,10 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "watch": "nodemon src/index.ts",
-    "debug": "node -r ts-node/register src/index.ts"
+    "debug": "node -r ts-node/register src/index.ts",
+    "migrate:save": "npx prisma2 migrate save --experimental",
+    "migrate:up": "npx prisma2 migrate up --experimental",
+    "generate": "npx prisma2 generate"
   },
   "dependencies": {
     "@prisma/client": "^2.0.0-preview024",
