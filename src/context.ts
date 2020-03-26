@@ -10,5 +10,6 @@ export interface Context {
 }
 
 export function createContext(req: ExpressContext): Context {
+  console.log(req);
   return { ...req, prisma };
 }

@@ -38,7 +38,8 @@ const Mutation = mutationType({
           data: {
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+
           }
         });
         return {
@@ -47,6 +48,36 @@ const Mutation = mutationType({
         };
       }
     });
+
+    t.field('login', {
+      type: 'AuthPayload',
+      args: {
+        email: stringArg({nullable: false}),
+        password: stringArg({nullable: false}),
+      },
+      resolve: async (_parent, {email, password}, ctx) => {
+        const user = await ctx.prisma.user.findOne({
+          where: {
+            email,
+          }
+        })
+
+        if(!user) {
+          throw new Error(`No user found for email: ${email}`)
+        }
+
+        const passwordValid = await compare(password, user.password);
+
+        if (!passwordValid) {
+          throw new Error('Invalid password')
+        }
+
+        return {
+          token: sign({ userId: user.id }, config.app_secret),
+          user,
+        }
+      }
+    })
   }
 });
 
