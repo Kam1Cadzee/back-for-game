@@ -1,28 +1,12 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
+import { ApolloServer } from "apollo-server";
+import { schema } from "./schema";
+import { createContext } from "./context";
+import config from "./config";
 
-const prisma = new PrismaClient();
-
-const main = async () => {
-  const user = await prisma.user.create({
-    data: {
-      email: "sdfds@sdf.com",
-      name: "1231",
-      password: "12312"
-    }
-  });
-
-  console.log(user);
-};
-
-main();
-
-const app = express();
-
-app.use("/", (req, res) => {
-  res.send("ok");
-});
-
-app.listen(3000, () => {
-  console.log("Start server");
-});
+new ApolloServer({ schema, context: createContext }).listen(
+  { port: config.port },
+  () =>
+    console.log(
+      `🚀 Server ready at: http://localhost:${config.port}\n⭐️ See sample queries: http://pris.ly/e/ts/graphql-apollo-server#using-the-graphql-api`
+    )
+);
