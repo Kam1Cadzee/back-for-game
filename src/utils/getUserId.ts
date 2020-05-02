@@ -1,16 +1,21 @@
-import { verify } from 'jsonwebtoken'
-import { Context } from '../context'
-import config from '../config'
+import { verify } from "jsonwebtoken";
+import { Request } from "express";
+import config from "../config";
 
 interface Token {
-  userId: string
+  userId: string;
 }
 
-export function getUserId(context: Context) {
-  const Authorization = context.req.get('Authorization')
+export function getUserId(req: Request) {
+  const Authorization = req.get("Authorization");
   if (Authorization) {
-    const token = Authorization.replace('Bearer ', '')
-    const verifiedToken = verify(token, config.app_secret) as Token
-    return verifiedToken && verifiedToken.userId
+    const token = Authorization.replace("Bearer ", "");
+    try {
+      const verifiedToken = verify(token, config.app_secret) as Token;
+      return verifiedToken && verifiedToken.userId;
+    } catch (e) {
+      return null;
+    }
   }
+  return null;
 }

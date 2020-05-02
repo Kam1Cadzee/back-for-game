@@ -1,15 +1,16 @@
-import { ExpressContext } from "apollo-server-express/src/ApolloServer";
-import { PrismaClient } from "@prisma/client";
-import { Request } from "express";
+import { ExpressContext } from 'apollo-server-express/src/ApolloServer';
+import { PrismaClient } from '@prisma/client';
+import { Request } from 'express';
+import { getUserId } from './utils/getUserId';
 
 const prisma = new PrismaClient();
 
 export interface Context {
   prisma: PrismaClient;
-  req: Request;
+  userId: string;
 }
 
 export function createContext(req: ExpressContext): Context {
-  console.log(req);
-  return { ...req, prisma };
+  const userId = getUserId(req.req);
+  return { userId, prisma };
 }

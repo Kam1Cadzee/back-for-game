@@ -1,104 +1,29 @@
-import { nexusPrismaPlugin } from "nexus-prisma";
-import {
-  intArg,
-  makeSchema,
-  objectType,
-  stringArg,
-  mutationType,
-  mutationField
-} from "nexus";
-import { compare, hash } from "bcryptjs";
-import { sign } from "jsonwebtoken";
-import User from "./models/User";
-import AuthPayload from "./models/AuthPayload";
-import config from "./config";
+import Query from './resolvers/Query';
+import { nexusPrismaPlugin } from 'nexus-prisma';
+import { makeSchema } from 'nexus';
+import User from './models/User';
+import AuthPayload from './models/AuthPayload';
+import Mutation from './resolvers/Mutation';
 
-const Query = objectType({
-  name: "Query",
-  definition(t) {
-    t.crud.user();
-    t.crud.users({
-      filtering: true
-    });
-  }
-});
-
-const Mutation = mutationType({
-  definition(t) {
-    t.field("signup", {
-      type: "AuthPayload",
-      args: {
-        name: stringArg(),
-        email: stringArg({ nullable: false }),
-        password: stringArg({ nullable: false })
-      },
-      resolve: async (_parent, { name, email, password }, ctx) => {
-        const hashedPassword = await hash(password, 10);
-        const user = await ctx.prisma.user.create({
-          data: {
-            name,
-            email,
-            password: hashedPassword,
-
-          }
-        });
-        return {
-          token: sign({ userId: user.id }, config.app_secret),
-          user
-        };
-      }
-    });
-
-    t.field('login', {
-      type: 'AuthPayload',
-      args: {
-        email: stringArg({nullable: false}),
-        password: stringArg({nullable: false}),
-      },
-      resolve: async (_parent, {email, password}, ctx) => {
-        const user = await ctx.prisma.user.findOne({
-          where: {
-            email,
-          }
-        })
-
-        if(!user) {
-          throw new Error(`No user found for email: ${email}`)
-        }
-
-        const passwordValid = await compare(password, user.password);
-
-        if (!passwordValid) {
-          throw new Error('Invalid password')
-        }
-
-        return {
-          token: sign({ userId: user.id }, config.app_secret),
-          user,
-        }
-      }
-    })
-  }
-});
-
+console.log(__dirname + '/../schema.graphql')
 export const schema = makeSchema({
   types: [Query, User, Mutation, AuthPayload],
   plugins: [nexusPrismaPlugin()],
   outputs: {
-    schema: __dirname + "/../schema.graphql",
-    typegen: __dirname + "/generated/nexus.ts"
+    schema: __dirname + '/../schema.graphql',
+    typegen: __dirname + '/generated/nexus.ts',
   },
   typegenAutoConfig: {
-    contextType: "Context.Context",
+    contextType: 'Context.Context',
     sources: [
       {
-        source: "@prisma/client",
-        alias: "prisma"
+        source: '@prisma/client',
+        alias: 'prisma',
       },
       {
-        source: require.resolve("./context"),
-        alias: "Context"
-      }
-    ]
-  }
+        source: require.resolve('./context'),
+        alias: 'Context',
+      },
+    ],
+  },
 });
