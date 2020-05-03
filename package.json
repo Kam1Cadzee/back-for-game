@@ -6,8 +6,8 @@
   "scripts": {
     "start": "ts-node --transpile-only src/app",
     "watch": "nodemon src/app.ts",
-    "server": "npm migrate && npm generate:prisma",
-    "generate": "npm genereate:prisma && npm genereate:types",
+    "server": "npm run migrate && npm run generate:prisma",
+    "generate": "npm run genereate:prisma && npm run genereate:types",
     "genereate:prisma": "npx prisma generate",
     "genereate:types": "ts-node-dev --transpileOnly generatedTypes.ts",
     "migrate": "npm run migrate:save && npm run migrate:up",
