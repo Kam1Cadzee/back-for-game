@@ -14,7 +14,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "rootDir": "."
   },
+  "include": ["."],
   "exclude": ["node_modules"]
 }

@@ -1,0 +1,33 @@
+export type TempTypes =
+                              'OrderByArg' | 
+                                  'User' | 
+                 'DeleteOneUserResolver' | 
+                 'UpsertOneUserResolver' | 
+                 'UpdateOneUserResolver' | 
+                 'AggregateUserResolver' | 
+                'UpdateManyUserResolver' | 
+                   'FindOneUserResolver' | 
+                  'FindManyUserResolver' | 
+                 'CreateOneUserResolver' | 
+                'DeleteManyUserResolver' | 
+                     'DeleteOneUserArgs' | 
+                    'DeleteManyUserArgs' | 
+                    'UpdateManyUserArgs' | 
+                       'FindOneUserArgs' | 
+                      'FindManyUserArgs' | 
+                     'CreateOneUserArgs' | 
+                     'UpdateOneUserArgs' | 
+                     'UpsertOneUserArgs' | 
+                      'UserCrudResolver' | 
+                         'AggregateUser' | 
+                          'BatchPayload' | 
+                'AggregateUserCountArgs' | 
+                        'DateTimeFilter' | 
+           'UserUpdateManyMutationInput' | 
+                          'StringFilter' | 
+                        'UserWhereInput' | 
+                       'UserUpdateInput' | 
+                       'UserCreateInput' | 
+                  'UserWhereUniqueInput' | 
+                             'IntFilter' | 
+                      'UserOrderByInput';
