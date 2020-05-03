@@ -6,11 +6,11 @@
   "scripts": {
     "start": "ts-node --transpile-only src/app",
     "watch": "nodemon src/app.ts",
-    "server": "yarn migrate && yarn generate:prisma",
-    "generate": "yarn genereate:prisma && yarn genereate:types",
+    "server": "npm migrate && npm generate:prisma",
+    "generate": "npm genereate:prisma && npm genereate:types",
     "genereate:prisma": "npx prisma generate",
     "genereate:types": "ts-node-dev --transpileOnly generatedTypes.ts",
-    "migrate": "yarn migrate:save && yarn migrate:up",
+    "migrate": "npm migrate:save && npm migrate:up",
     "migrate:save": "npx prisma2 migrate save --experimental",
     "migrate:up": "npx prisma2 migrate up --experimental"
   },
