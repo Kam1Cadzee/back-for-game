@@ -10,7 +10,7 @@
     "generate": "npm genereate:prisma && npm genereate:types",
     "genereate:prisma": "npx prisma generate",
     "genereate:types": "ts-node-dev --transpileOnly generatedTypes.ts",
-    "migrate": "npm migrate:save && npm migrate:up",
+    "migrate": "npm run migrate:save && npm run migrate:up",
     "migrate:save": "npx prisma2 migrate save --experimental",
     "migrate:up": "npx prisma2 migrate up --experimental"
   },
