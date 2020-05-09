@@ -48,12 +48,11 @@ const startServer = async () => {
 
   const app = express();
 
+  console.log(path.join(__dirname, '..', 'schema.gql'))
   app.use(query());
   app.use(cors());
   app.use(express.json());
-  app.get('/graphql', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'schema.gql'))
-  });
+  app.use('/', express.static(path.join(__dirname, '..')));
 
   server.applyMiddleware({app, path: '/graphql'});
 
