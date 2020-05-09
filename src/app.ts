@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {isDevelopment} from './utils/nodeEnv';
-import {ApolloServer} from 'apollo-server-express';
-import express from 'express';
+import {ApolloServer} from 'apollo-server';
+//import express from 'express';
 import {createContext} from './context';
 import {applyMiddleware} from 'graphql-middleware';
 import config from './config';
@@ -27,18 +27,15 @@ const startServer = async () => {
   });
   const middleware = applyMiddleware(await bootstrap(), permissions);
 
-  const app = express();
+ /* const app = express();
 
   app.use(cors());
   //app.use(express.static('client/build'));
-  app.use(express.json());
+  app.use(express.json());*/
   /* app.get('/', (req, res) => {
      res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
    });*/
 
-  app.use('/graphql', (req, res, next) => {
-    next();
-  });
   const server = new ApolloServer({
     schema: middleware,
     context: createContext,
@@ -56,9 +53,8 @@ const startServer = async () => {
     },
   });
 
-  server.applyMiddleware({app});
 
-  app.listen({port: config.port}, () =>
+  await server.listen({port: config.port}, () =>
     console.log(
       `🚀 Server ready at: http://localhost:${config.port}${server.graphqlPath}\n⭐️ See sample queries: http://pris.ly/e/ts/graphql-apollo-server#using-the-graphql-api`,
     ),
