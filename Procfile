@@ -1,1 +1,1 @@
-worker: npm run server && ts-node src/app
+worker: npm run generate:prisma && ts-node src/app
