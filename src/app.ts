@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {isDevelopment} from './utils/nodeEnv';
-import {ApolloServer} from 'apollo-server';
-//import express from 'express';
+import {ApolloServer} from 'apollo-server-express';
+import express from 'express';
 import {createContext} from './context';
 import {applyMiddleware} from 'graphql-middleware';
 import config from './config';
@@ -9,6 +9,7 @@ import {buildSchema} from 'type-graphql';
 import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
+import query from 'qs-middleware';
 
 const startServer = async () => {
   await configTypeGraph({
@@ -27,7 +28,7 @@ const startServer = async () => {
   });
   const middleware = applyMiddleware(await bootstrap(), permissions);
 
- /* const app = express();
+ /* c
 
   app.use(cors());
   //app.use(express.static('client/build'));
@@ -53,8 +54,14 @@ const startServer = async () => {
     },
   });
 
+  const app = express();
+  const path = '/graphql';
 
-  await server.listen({port: config.port}, () =>
+  app.use(query());
+  app.use(cors());
+  server.applyMiddleware({ app, path });
+
+  app.listen({port: config.port}, () =>
     console.log(
       `🚀 Server ready at: http://localhost:${config.port}${server.graphqlPath}\n⭐️ See sample queries: http://pris.ly/e/ts/graphql-apollo-server#using-the-graphql-api`,
     ),
