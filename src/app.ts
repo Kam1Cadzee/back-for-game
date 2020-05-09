@@ -9,8 +9,6 @@ import {buildSchema} from 'type-graphql';
 import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
-import query from 'qs-middleware';
-import path from 'path';
 
 const startServer = async () => {
   await configTypeGraph({
@@ -33,8 +31,8 @@ const startServer = async () => {
     schema: middleware,
     context: createContext,
     uploads: true,
-    introspection: true,
-    playground: true,
+    introspection: isDevelopment,
+    playground: isDevelopment,
     formatError: (err) => {
       const message: any = {
         message: err.message,
@@ -50,7 +48,6 @@ const startServer = async () => {
 
   const app = express();
 
-  app.use(query());
   app.use(cors());
   app.use(express.json());
 
