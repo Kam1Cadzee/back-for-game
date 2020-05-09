@@ -54,7 +54,6 @@ const startServer = async () => {
     },
   });
 
-  server.setGraphQLPath('/g');
   server.applyMiddleware({app});
 
   app.listen({port: config.port}, () =>
