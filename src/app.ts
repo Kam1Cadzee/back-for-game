@@ -33,6 +33,8 @@ const startServer = async () => {
     schema: middleware,
     context: createContext,
     uploads: true,
+    introspection: true,
+    playground: true,
     formatError: (err) => {
       const message: any = {
         message: err.message,
@@ -52,7 +54,7 @@ const startServer = async () => {
   app.use(cors());
   app.use(express.json());
 
-  server.applyMiddleware({app, path: '/'});
+  server.applyMiddleware({app, path: '/graphql'});
 
   app.listen({port: config.port}, () =>
     console.log(
