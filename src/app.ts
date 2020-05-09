@@ -10,6 +10,7 @@ import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
 import query from 'qs-middleware';
+import path from 'path';
 
 const startServer = async () => {
   await configTypeGraph({
@@ -27,15 +28,6 @@ const startServer = async () => {
     ]
   });
   const middleware = applyMiddleware(await bootstrap(), permissions);
-
- /* c
-
-  app.use(cors());
-  //app.use(express.static('client/build'));
-  app.use(express.json());*/
-  /* app.get('/', (req, res) => {
-     res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
-   });*/
 
   const server = new ApolloServer({
     schema: middleware,
@@ -55,11 +47,15 @@ const startServer = async () => {
   });
 
   const app = express();
-  const path = '/graphql';
 
   app.use(query());
   app.use(cors());
-  server.applyMiddleware({ app, path });
+  app.use(express.json());
+  app.get('/graphql', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'schema.gql'))
+  });
+
+  server.applyMiddleware({app, path: '/graphql'});
 
   app.listen({port: config.port}, () =>
     console.log(
