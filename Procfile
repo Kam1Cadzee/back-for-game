@@ -1,1 +1,1 @@
-web: npm run server && ts-node src/app
+worker: npm run server && ts-node src/app
