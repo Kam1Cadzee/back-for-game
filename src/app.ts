@@ -8,7 +8,6 @@ import config from './config';
 import {buildSchema} from 'type-graphql';
 import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
-import path from 'path';
 import cors from 'cors';
 
 const startServer = async () => {
@@ -33,10 +32,13 @@ const startServer = async () => {
   app.use(cors());
   //app.use(express.static('client/build'));
   app.use(express.json());
- /* app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
-  });*/
+  /* app.get('/', (req, res) => {
+     res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
+   });*/
 
+  app.use('/graphql', (req, res, next) => {
+    next();
+  });
   const server = new ApolloServer({
     schema: middleware,
     context: createContext,
