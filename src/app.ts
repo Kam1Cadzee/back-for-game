@@ -31,11 +31,11 @@ const startServer = async () => {
   const app = express();
 
   app.use(cors());
-  app.use(express.static('client/build'));
+  //app.use(express.static('client/build'));
   app.use(express.json());
-  app.get('/', (req, res) => {
+ /* app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
-  });
+  });*/
 
   const server = new ApolloServer({
     schema: middleware,
@@ -54,6 +54,7 @@ const startServer = async () => {
     },
   });
 
+  server.setGraphQLPath('/g');
   server.applyMiddleware({app});
 
   app.listen({port: config.port}, () =>
