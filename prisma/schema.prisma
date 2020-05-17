@@ -21,22 +21,33 @@ model User {
   password  String   @default("")
 }
 
+model PartOfSpeechDesc {
+    id      Int    @default(autoincrement()) @id
+    type PartOfSpeech
+    ru String
+    ua String
+    en String
+}
+
 enum PartOfSpeech {
-  NOUN
-  VERB
-  PRONOUN
-  ADJECTIVE
-  PREPOSITION
+ ADJ
+ ADV
+ CONJ
+ DET
+ MODAL
+ NOUN
+ PREP
+ PRON
+ VERB
+ OTHER
 }
 
 model Irrverb {
   id      Int    @default(autoincrement()) @id
-  form1RU String
   form1EN String
-  form2RU String
   form2EN String
-  form3RU String
   form3EN String
+  ru String
   word    Word?
 }
 
@@ -50,7 +61,7 @@ model Word {
   id        Int          @default(autoincrement()) @id
   en        String
   ru        String
-  type      PartOfSpeech
+  type      PartOfSpeech @default(OTHER)
   irrverb   Irrverb?     @relation(fields: [irrverbId], references: [id])
   irrverbId Int?
   entity    Entity?      @relation(fields: [entityId], references: [id])

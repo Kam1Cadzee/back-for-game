@@ -24,9 +24,3 @@ export class LoginUserInput {
   })
   password: string;
 }
-
-@ArgsType()
-export class LoginUserArgs {
-  @Field(_type => LoginUserInput, { nullable: false })
-  data!: LoginUserInput;
-}
