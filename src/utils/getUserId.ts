@@ -12,7 +12,10 @@ export function getUserId(req: Request) {
     const token = Authorization.replace("Bearer ", "");
     try {
       const verifiedToken = verify(token, config.app_secret) as Token;
-      return verifiedToken && verifiedToken.userId;
+      if(verifiedToken) {
+        return verifiedToken.userId;
+      }
+      return null;
     } catch (e) {
       return null;
     }

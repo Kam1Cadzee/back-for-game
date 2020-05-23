@@ -4,17 +4,26 @@ import {Irrverb} from '../../type-graphql/models';
 
 @ObjectType()
 export class TranslateWordWithParseReturn {
-  @Field(returns => [String])
-  translations: string[];
-
   @Field(returns => PartOfSpeech)
   tag: PartOfSpeech;
+
+  @Field(returns => String)
+  original: string;
 
   @Field(returns => [OtherWord])
   otherWords: OtherWord[];
 
+  @Field(returns => [Translation])
+  translations: Translation[];
+
   @Field(returns => [Expression])
-  expressions: Expression[];
+  phrases: Expression[];
+
+  @Field(returns => [Expression])
+  sentences: Expression[];
+
+  @Field(returns => [String])
+  backTranslations: string[];
 
   @Field(returns => Irrverb, {
     nullable: true,
@@ -25,17 +34,23 @@ export class TranslateWordWithParseReturn {
 
 @ObjectType()
 class OtherWord {
-  @Field()
-  normalizedTarget: string;
-
   @Field(returns => PartOfSpeech)
-  posTag: PartOfSpeech;
+  tag: PartOfSpeech;
 
   @Field()
-  confidence: number;
+  en: string;
 
-  @Field(returns => [String])
-  backTranslations: string[]
+  @Field()
+  ru: string
+}
+
+@ObjectType()
+class Translation {
+  @Field(returns => PartOfSpeech)
+  tag: PartOfSpeech;
+
+  @Field()
+  translation: string;
 }
 
 @ObjectType()

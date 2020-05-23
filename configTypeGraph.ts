@@ -1,6 +1,7 @@
 import fsExtra from 'fs-extra'
 import fs from 'fs';
 import {TempTypes} from './temp-types';
+import {isDevelopment} from './src/utils/nodeEnv';
 
 const fsP = fs.promises;
 
@@ -19,11 +20,19 @@ interface IConfig {
 const configTypeGraph = async (config?: IConfig) => {
   const isExist = await fsExtra.pathExists(srcpath);
   if(!isExist) return ;
+
+  if(isDevelopment) {
+    await copyGenerated();
+  }
+  else {
+    await moveGenerated();
+  }
+
   if (config.blackList) {
     addExtraFilter(config);
-    await clear(srcpath, config.blackList);
+    await clear(dstpath, config.blackList);
   }
-  await moveGenerated();
+
 };
 
 const addExtraFilter = (config: IConfig) => {
@@ -103,5 +112,9 @@ const clear = async (path: string, blackList: Array<TempTypes | IField>) => {
 const moveGenerated = async () => {
   await fsExtra.remove(dstpath);
   await fsExtra.move(srcpath, dstpath)
+};
+const copyGenerated = async () => {
+  await fsExtra.remove(dstpath);
+  await fsExtra.copy(srcpath, dstpath)
 };
 export default configTypeGraph;

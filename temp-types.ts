@@ -1,6 +1,81 @@
 export type TempTypes =
                               'OrderByArg' | 
+                          'PartOfSpeech' | 
+                                  'Word' | 
+                                'Entity' | 
+                              'Sentence' | 
+                                'Phrase' | 
+                               'Irrverb' | 
+                             'Translate' | 
                                   'User' | 
+                      'PartOfSpeechDesc' | 
+            'TranslateRelationsResolver' | 
+                    'TranslateWordsArgs' | 
+               'EntityRelationsResolver' | 
+                     'EntityPhrasesArgs' | 
+                   'EntitySentencesArgs' | 
+                       'EntityWordsArgs' | 
+               'PhraseRelationsResolver' | 
+                 'UserRelationsResolver' | 
+                      'UserEntitiesArgs' | 
+             'SentenceRelationsResolver' | 
+                 'WordRelationsResolver' | 
+                     'WordTranslateArgs' | 
+              'IrrverbRelationsResolver' | 
+            'UpdateOneTranslateResolver' | 
+           'DeleteManyTranslateResolver' | 
+            'DeleteOneTranslateResolver' | 
+             'FindManyTranslateResolver' | 
+                 'TranslateCrudResolver' | 
+            'CreateOneTranslateResolver' | 
+            'UpsertOneTranslateResolver' | 
+           'UpdateManyTranslateResolver' | 
+            'AggregateTranslateResolver' | 
+              'FindOneTranslateResolver' | 
+                  'FindOneTranslateArgs' | 
+               'DeleteManyTranslateArgs' | 
+               'UpdateManyTranslateArgs' | 
+                'CreateOneTranslateArgs' | 
+                'DeleteOneTranslateArgs' | 
+                'UpsertOneTranslateArgs' | 
+                 'FindManyTranslateArgs' | 
+                'UpdateOneTranslateArgs' | 
+                    'EntityCrudResolver' | 
+               'AggregateEntityResolver' | 
+                 'FindOneEntityResolver' | 
+                'FindManyEntityResolver' | 
+               'UpsertOneEntityResolver' | 
+              'DeleteManyEntityResolver' | 
+               'UpdateOneEntityResolver' | 
+              'UpdateManyEntityResolver' | 
+               'DeleteOneEntityResolver' | 
+                  'DeleteManyEntityArgs' | 
+                     'FindOneEntityArgs' | 
+                   'UpdateOneEntityArgs' | 
+                   'UpsertOneEntityArgs' | 
+                    'FindManyEntityArgs' | 
+                   'DeleteOneEntityArgs' | 
+                   'CreateOneEntityArgs' | 
+                  'UpdateManyEntityArgs' | 
+               'CreateOneEntityResolver' | 
+               'DeleteOnePhraseResolver' | 
+              'UpdateManyPhraseResolver' | 
+               'CreateOnePhraseResolver' | 
+                    'PhraseCrudResolver' | 
+               'UpsertOnePhraseResolver' | 
+               'UpdateOnePhraseResolver' | 
+              'DeleteManyPhraseResolver' | 
+                 'FindOnePhraseResolver' | 
+               'AggregatePhraseResolver' | 
+                'FindManyPhraseResolver' | 
+                    'FindManyPhraseArgs' | 
+                   'CreateOnePhraseArgs' | 
+                  'UpdateManyPhraseArgs' | 
+                   'DeleteOnePhraseArgs' | 
+                   'UpsertOnePhraseArgs' | 
+                   'UpdateOnePhraseArgs' | 
+                  'DeleteManyPhraseArgs' | 
+                     'FindOnePhraseArgs' | 
                  'DeleteOneUserResolver' | 
                  'UpsertOneUserResolver' | 
                  'UpdateOneUserResolver' | 
@@ -19,15 +94,231 @@ export type TempTypes =
                      'UpdateOneUserArgs' | 
                      'UpsertOneUserArgs' | 
                       'UserCrudResolver' | 
+       'FindOnePartOfSpeechDescResolver' | 
+      'FindManyPartOfSpeechDescResolver' | 
+     'CreateOnePartOfSpeechDescResolver' | 
+    'UpdateManyPartOfSpeechDescResolver' | 
+          'PartOfSpeechDescCrudResolver' | 
+     'UpsertOnePartOfSpeechDescResolver' | 
+     'AggregatePartOfSpeechDescResolver' | 
+         'CreateOnePartOfSpeechDescArgs' | 
+         'UpdateOnePartOfSpeechDescArgs' | 
+         'UpsertOnePartOfSpeechDescArgs' | 
+        'UpdateManyPartOfSpeechDescArgs' | 
+          'FindManyPartOfSpeechDescArgs' | 
+         'DeleteOnePartOfSpeechDescArgs' | 
+           'FindOnePartOfSpeechDescArgs' | 
+        'DeleteManyPartOfSpeechDescArgs' | 
+     'DeleteOnePartOfSpeechDescResolver' | 
+    'DeleteManyPartOfSpeechDescResolver' | 
+     'UpdateOnePartOfSpeechDescResolver' | 
+                  'SentenceCrudResolver' | 
+            'UpdateManySentenceResolver' | 
+             'CreateOneSentenceResolver' | 
+            'DeleteManySentenceResolver' | 
+             'UpdateOneSentenceResolver' | 
+               'FindOneSentenceResolver' | 
+             'UpsertOneSentenceResolver' | 
+              'FindManySentenceResolver' | 
+             'AggregateSentenceResolver' | 
+                'UpdateManySentenceArgs' | 
+                   'FindOneSentenceArgs' | 
+                 'DeleteOneSentenceArgs' | 
+                 'UpdateOneSentenceArgs' | 
+                 'UpsertOneSentenceArgs' | 
+                'DeleteManySentenceArgs' | 
+                  'FindManySentenceArgs' | 
+                 'CreateOneSentenceArgs' | 
+             'DeleteOneSentenceResolver' | 
+                  'FindManyWordResolver' | 
+                      'WordCrudResolver' | 
+                 'CreateOneWordResolver' | 
+                'DeleteManyWordResolver' | 
+                 'DeleteOneWordResolver' | 
+                 'UpsertOneWordResolver' | 
+                 'UpdateOneWordResolver' | 
+                      'FindManyWordArgs' | 
+                     'CreateOneWordArgs' | 
+                    'DeleteManyWordArgs' | 
+                     'DeleteOneWordArgs' | 
+                       'FindOneWordArgs' | 
+                    'UpdateManyWordArgs' | 
+                     'UpsertOneWordArgs' | 
+                     'UpdateOneWordArgs' | 
+                 'AggregateWordResolver' | 
+                'UpdateManyWordResolver' | 
+                   'FindOneWordResolver' | 
+              'DeleteOneIrrverbResolver' | 
+               'FindManyIrrverbResolver' | 
+              'CreateOneIrrverbResolver' | 
+              'UpdateOneIrrverbResolver' | 
+             'DeleteManyIrrverbResolver' | 
+              'UpsertOneIrrverbResolver' | 
+                   'IrrverbCrudResolver' | 
+                    'FindOneIrrverbArgs' | 
+                 'UpdateManyIrrverbArgs' | 
+                  'UpdateOneIrrverbArgs' | 
+                 'DeleteManyIrrverbArgs' | 
+                   'FindManyIrrverbArgs' | 
+                  'CreateOneIrrverbArgs' | 
+                  'UpsertOneIrrverbArgs' | 
+                  'DeleteOneIrrverbArgs' | 
+              'AggregateIrrverbResolver' | 
+                'FindOneIrrverbResolver' | 
+             'UpdateManyIrrverbResolver' | 
+             'AggregatePartOfSpeechDesc' | 
+                    'AggregateTranslate' | 
+                     'AggregateSentence' | 
                          'AggregateUser' | 
+                       'AggregatePhrase' | 
+                      'AggregateIrrverb' | 
+                         'AggregateWord' | 
                           'BatchPayload' | 
+                       'AggregateEntity' | 
+    'AggregatePartOfSpeechDescCountArgs' | 
+             'AggregateIrrverbCountArgs' | 
+           'AggregateTranslateCountArgs' | 
+              'AggregateEntityCountArgs' | 
+                'AggregateWordCountArgs' | 
+              'AggregatePhraseCountArgs' | 
+            'AggregateSentenceCountArgs' | 
                 'AggregateUserCountArgs' | 
+       'SentenceUpdateManyMutationInput' | 
+        'PhraseCreateWithoutEntityInput' | 
+                          'EntityFilter' | 
+          'EntityCreateWithoutUserInput' | 
                         'DateTimeFilter' | 
+                        'WordWhereInput' | 
+'SentenceUpdateWithWhereUniqueWithoutEntityInput' | 
+                            'WordFilter' | 
+'WordUpdateWithWhereUniqueWithoutEntityInput' | 
+'WordUpsertWithWhereUniqueWithoutTranslateInput' | 
+'SentenceUpsertWithWhereUniqueWithoutEntityInput' | 
+                   'TranslateWhereInput' | 
+'WordUpsertWithWhereUniqueWithoutEntityInput' | 
+                      'WordOrderByInput' | 
+      'WordUpdateWithoutEntityDataInput' | 
+    'EntityCreateOneWithoutPhrasesInput' | 
+        'UserCreateWithoutEntitiesInput' | 
+                    'PhraseOrderByInput' | 
+       'EntityUpsertWithoutPhrasesInput' | 
+    'IrrverbCreateOneWithoutEntityInput' | 
+    'PhraseUpdateWithoutEntityDataInput' | 
+         'EntityUpdateManyMutationInput' | 
+       'IrrverbUpsertWithoutEntityInput' | 
+                    'IrrverbUpdateInput' | 
+                'PhraseWhereUniqueInput' | 
+'PartOfSpeechDescUpdateManyMutationInput' | 
            'UserUpdateManyMutationInput' | 
+                  'TranslateCreateInput' | 
+             'TranslateScalarWhereInput' | 
+                  'WordScalarWhereInput' | 
+   'EntityUpdateWithoutIrrverbDataInput' | 
+                       'WordUpdateInput' | 
+          'WordCreateWithoutEntityInput' | 
+'EntityUpdateWithWhereUniqueWithoutUserInput' | 
+              'SentenceScalarWhereInput' | 
+     'EntityUpdateWithoutWordsDataInput' | 
+'TranslateUpdateWithWhereUniqueWithoutWordsInput' | 
+'UserUpdateOneRequiredWithoutEntitiesInput' | 
+    'EntityUpdateOneWithoutPhrasesInput' | 
+      'EntityUpdateManyWithoutUserInput' | 
+                'EntityScalarWhereInput' | 
+                     'PhraseCreateInput' | 
+                    'EntityOrderByInput' | 
                           'StringFilter' | 
+                  'SentenceOrderByInput' | 
+    'PhraseUpdateManyWithoutEntityInput' | 
+'TranslateUpsertWithWhereUniqueWithoutWordsInput' | 
+    'EntityCreateOneWithoutIrrverbInput' | 
+       'EntityUpsertWithoutIrrverbInput' | 
+      'EntityCreateManyWithoutUserInput' | 
+                   'SentenceUpdateInput' | 
+                     'EntityCreateInput' | 
+                 'TranslateOrderByInput' | 
+      'WordUpdateManyWithoutEntityInput' | 
+         'PhraseUpdateManyMutationInput' | 
                         'UserWhereInput' | 
+               'IrrverbWhereUniqueInput' | 
+   'IrrverbUpdateWithoutEntityDataInput' | 
+    'WordUpdateManyWithWhereNestedInput' | 
+                      'PhraseWhereInput' | 
+                    'PartOfSpeechFilter' | 
+    'PhraseCreateManyWithoutEntityInput' | 
+     'UserCreateOneWithoutEntitiesInput' | 
+    'IrrverbUpdateOneWithoutEntityInput' | 
+    'EntityUpdateOneWithoutIrrverbInput' | 
                        'UserUpdateInput' | 
+  'PhraseUpdateManyWithWhereNestedInput' | 
+           'PartOfSpeechDescCreateInput' | 
+'PhraseUpdateWithWhereUniqueWithoutEntityInput' | 
+  'EntityUpdateOneWithoutSentencesInput' | 
+      'WordCreateManyWithoutEntityInput' | 
+       'WordCreateWithoutTranslateInput' | 
+'PhraseUpsertWithWhereUniqueWithoutEntityInput' | 
+      'TranslateUpdateManyMutationInput' | 
+                     'IrrverbWhereInput' | 
+            'PartOfSpeechDescWhereInput' | 
+ 'EntityUpdateWithoutSentencesDataInput' | 
+  'EntityCreateOneWithoutSentencesInput' | 
+  'TranslateCreateManyWithoutWordsInput' | 
+  'SentenceUpdateManyWithoutEntityInput' | 
+      'SentenceCreateWithoutEntityInput' | 
+                   'SentenceCreateInput' | 
+   'WordCreateManyWithoutTranslateInput' | 
+                     'EntityUpdateInput' | 
+'WordUpdateWithWhereUniqueWithoutTranslateInput' | 
+       'IrrverbCreateWithoutEntityInput' | 
+               'WordUpdateManyDataInput' | 
+       'EntityCreateWithoutPhrasesInput' | 
+      'EntityUpdateWithoutUserDataInput' | 
+      'PartOfSpeechDescWhereUniqueInput' | 
+                    'SentenceWhereInput' | 
+'EntityUpdateOneRequiredWithoutWordsInput' | 
+         'EntityUpsertWithoutWordsInput' | 
+  'SentenceCreateManyWithoutEntityInput' | 
+          'PartOfSpeechDescOrderByInput' | 
+      'TranslateCreateWithoutWordsInput' | 
                        'UserCreateInput' | 
+           'PartOfSpeechDescUpdateInput' | 
+'SentenceUpdateManyWithWhereNestedInput' | 
                   'UserWhereUniqueInput' | 
+                     'NullableIntFilter' | 
+             'PhraseUpdateManyDataInput' | 
+'EntityUpsertWithWhereUniqueWithoutUserInput' | 
+  'EntityUpdateManyWithWhereNestedInput' | 
+                          'PhraseFilter' | 
+          'TranslateUpdateManyDataInput' | 
+         'EntityCreateWithoutWordsInput' | 
+                'EntityWhereUniqueInput' | 
+    'UserUpdateWithoutEntitiesDataInput' | 
+       'EntityCreateWithoutIrrverbInput' | 
                              'IntFilter' | 
-                      'UserOrderByInput';
+                      'UserOrderByInput' | 
+  'SentenceUpdateWithoutEntityDataInput' | 
+'TranslateUpdateManyWithWhereNestedInput' | 
+              'SentenceWhereUniqueInput' | 
+                    'IrrverbCreateInput' | 
+           'WordUpdateManyMutationInput' | 
+     'EntityUpsertWithoutSentencesInput' | 
+   'WordUpdateManyWithoutTranslateInput' | 
+  'TranslateUpdateWithoutWordsDataInput' | 
+        'IrrverbUpdateManyMutationInput' | 
+                  'TranslateUpdateInput' | 
+             'TranslateWhereUniqueInput' | 
+                  'WordWhereUniqueInput' | 
+      'EntityCreateOneWithoutWordsInput' | 
+                'PhraseScalarWhereInput' | 
+             'EntityUpdateManyDataInput' | 
+                       'WordCreateInput' | 
+           'SentenceUpdateManyDataInput' | 
+   'EntityUpdateWithoutPhrasesDataInput' | 
+                       'TranslateFilter' | 
+     'EntityCreateWithoutSentencesInput' | 
+                        'SentenceFilter' | 
+                     'PhraseUpdateInput' | 
+                      'EntityWhereInput' | 
+                   'IrrverbOrderByInput' | 
+  'TranslateUpdateManyWithoutWordsInput' | 
+   'WordUpdateWithoutTranslateDataInput' | 
+        'UserUpsertWithoutEntitiesInput';

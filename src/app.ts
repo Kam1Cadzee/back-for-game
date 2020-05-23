@@ -21,6 +21,8 @@ const startServer = async () => {
     blackList: [
       'CreateOneUserResolver',
       'UserCrudResolver',
+      'CreateOneWordResolver',
+      'WordCrudResolver',
       {
         file: 'User',
         fields: ['password', 'createdAt']
