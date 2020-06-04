@@ -12,17 +12,15 @@ import {permissions} from './permissions/permission';
 import cors from 'cors';
 import serviceABBYY from './service/abbyyService';
 
-const test = async () => {
-  const res = await serviceABBYY.miniCard('go');
-};
-//test();
 const startServer = async () => {
   await configTypeGraph({
     blackList: [
-      'CreateOneUserResolver',
       'UserCrudResolver',
-      'CreateOneWordResolver',
       'WordCrudResolver',
+      'CreateUserResolver',
+      'CreateWordResolver',
+      'CreateTranslateResolver',
+      'TranslateCrudResolver',
       {
         file: 'User',
         fields: ['password', 'createdAt']
@@ -37,7 +35,6 @@ const startServer = async () => {
   const resultABBYY = await serviceABBYY.auth();
   if(resultABBYY !== true) {
     console.log(`Service ABBYY doesn't work, is crash on auth method`);
-    return ;
   }
   const server = new ApolloServer({
     schema: middleware,

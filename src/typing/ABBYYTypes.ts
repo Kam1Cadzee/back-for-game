@@ -29,3 +29,8 @@ export interface IWordList {
     "OriginalWord": string,
   }[],
 }
+
+export interface IAnotherWordList {
+  "heading": string,
+  "lingvoTranslations": string,
+}

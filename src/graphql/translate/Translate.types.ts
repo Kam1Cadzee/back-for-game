@@ -1,52 +1,41 @@
-import {Field, InputType, ObjectType} from 'type-graphql';
+import {ArgsType, Field, InputType, ObjectType} from 'type-graphql';
 import {PartOfSpeech} from '../../type-graphql/enums';
 import {Irrverb} from '../../type-graphql/models';
+import {PhraseCreateInput, PhraseUpdateInput, SentenceCreateInput} from '../../type-graphql/resolvers/inputs';
 
-/*@InputType()
+@InputType()
 export class TranslateWordWithParseInput {
-  @Field(returns => PartOfSpeech)
-  tag: PartOfSpeech;
-
   @Field(returns => String)
-  original: string;
+  title: string;
 
-  @Field(returns => [OtherWord])
-  otherWords: OtherWord[];
+  @Field(returns => [OtherWordInput])
+  words: OtherWordInput[];
 
-  @Field(returns => [Translation])
-  translations: Translation[];
+  @Field(returns => [PhraseCreateInput])
+  phrases: PhraseCreateInput[];
 
-  @Field(returns => [Expression])
-  phrases: Expression[];
-
-  @Field(returns => [Expression])
-  sentences: Expression[];
+  @Field(returns => [SentenceCreateInput])
+  sentences: SentenceCreateInput[];
 
   @Field({
     nullable: true
   })
-  irrwordId: number | null;
-}*/
+  irrverbId: number | null;
+}
 
 @ObjectType()
 export class TranslateWordWithParseReturn {
-  @Field(returns => PartOfSpeech)
-  tag: PartOfSpeech;
-
   @Field(returns => String)
-  original: string;
+  title: string;
 
   @Field(returns => [OtherWord])
-  otherWords: OtherWord[];
+  words: OtherWord[];
 
-  @Field(returns => [Translation])
-  translations: Translation[];
+  @Field(returns => [PhraseCustom])
+  phrases: PhraseCustom[];
 
-  @Field(returns => [Expression])
-  phrases: Expression[];
-
-  @Field(returns => [Expression])
-  sentences: Expression[];
+  @Field(returns => [SentenceCustom])
+  sentences: SentenceCustom[];
 
   @Field(returns => [String])
   backTranslations: string[];
@@ -55,35 +44,88 @@ export class TranslateWordWithParseReturn {
     nullable: true,
     defaultValue: null
   })
-  irrword: Irrverb | null;
+  irrverb: Irrverb | null;
 }
 
 @ObjectType()
-class OtherWord {
+export class OtherWord {
   @Field(returns => PartOfSpeech)
-  tag: PartOfSpeech;
+  type: PartOfSpeech;
 
   @Field()
   en: string;
 
   @Field(returns => [Translation])
-  ru: Translation[]
+  translate: Translation[]
 }
 
-@ObjectType()
-class Translation {
+@InputType()
+class OtherWordInput {
   @Field(returns => PartOfSpeech)
-  tag: PartOfSpeech;
+  type: PartOfSpeech;
 
   @Field()
-  translation: string;
+  en: string;
+
+  @Field(returns => [TranslationInput])
+  translate: TranslationInput[]
 }
 
 @ObjectType()
-class Expression {
-  @Field()
-  word: string;
+export class Translation {
+  @Field(returns => PartOfSpeech)
+  type: PartOfSpeech;
 
   @Field()
-  translation: string;
+  ru: string;
+}
+
+@InputType()
+export class TranslationInput {
+  @Field(returns => PartOfSpeech)
+  type: PartOfSpeech;
+
+  @Field()
+  ru: string;
+}
+
+
+@ObjectType()
+export class PhraseCustom {
+  @Field()
+  phrase: string;
+
+  @Field()
+  ru: string;
+}
+
+@ObjectType()
+export class SentenceCustom {
+  @Field()
+  sentence: string;
+
+  @Field()
+  ru: string;
+}
+
+
+@InputType()
+export class CreateTranslateInput {
+  @Field()
+  idWord: number;
+
+  @Field(returns => TranslationInput)
+  translation: TranslationInput
+}
+
+@ObjectType()
+export class TranslateReturn {
+  @Field()
+  id: number;
+
+  @Field()
+  ru: string;
+
+  @Field(returns => PartOfSpeech)
+  type: PartOfSpeech;
 }

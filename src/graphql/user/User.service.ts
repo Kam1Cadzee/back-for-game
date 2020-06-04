@@ -1,20 +1,20 @@
-import {Inject, Service} from 'typedi';
+import {Container, Inject, Service} from 'typedi';
 import {Context} from '../../context';
-import {LoginUserInput} from './User.types';
+import {LoginUserInput, UserSignUpInput} from './User.types';
 import {sign} from 'jsonwebtoken';
 import {compare, hash} from 'bcryptjs';
 import config from '../../config';
-import {UserCreateInput} from '../../type-graphql/resolvers/inputs';
 import {AuthenticationError} from 'apollo-server-errors';
+import {PrismaClient} from '@prisma/client';
 
 @Service()
 export class UserService {
-  constructor(@Inject('PRISMA_CONTEXT') private readonly context: Context) {
+  constructor(@Inject('PRISMA_CONTEXT') private readonly prisma: PrismaClient) {
   }
 
   async login(data: LoginUserInput) {
     const {email, password} = data;
-    const user = await this.context.prisma.user.findOne({
+    const user = await this.prisma.user.findOne({
       where: {
         email,
       },
@@ -29,16 +29,18 @@ export class UserService {
     if (!passwordValid) {
       throw new Error('Invalid password');
     }
-
     return {
-      token: sign({userId: user.id}, config.app_secret),
+      token: sign({userId: user.id, role: user.role}, config.app_secret),
       user,
     };
   }
 
-  async signup(data: UserCreateInput) {
-    const {email, lastName, name, password} = data;
-    let user = await this.context.prisma.user.findOne({
+  async signup(data: UserSignUpInput) {
+    const {email, lastName, name, password, repeatPassword} = data;
+    if(password !== repeatPassword) {
+      throw new AuthenticationError('Password mismatch');
+    }
+    let user = await this.prisma.user.findOne({
       where: {
         email,
       },
@@ -47,7 +49,7 @@ export class UserService {
       throw new AuthenticationError('User with that email already exists');
     }
     const hashedPassword = await hash(password, 10);
-    user = await this.context.prisma.user.create({
+    user = await this.prisma.user.create({
       data: {
         name,
         email,
@@ -56,8 +58,16 @@ export class UserService {
       },
     });
     return {
-      token: sign({userId: user.id}, config.app_secret),
+      token: sign({userId: user.id, role: user.role}, config.app_secret),
       user,
     };
+  }
+
+  async refreshUser(ctx: Context) {
+    return this.prisma.user.findOne({
+      where: {
+        id: ctx.userId
+      }
+    });
   }
 }

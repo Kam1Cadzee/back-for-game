@@ -1,24 +1,33 @@
 import { verify } from "jsonwebtoken";
 import { Request } from "express";
 import config from "../config";
+import {Role} from '../type-graphql/enums';
 
 interface Token {
-  userId: string;
+  userId: number;
+  role: Role;
 }
+const failObj: Token = {
+  role: null,
+  userId: null
+};
 
-export function getUserId(req: Request) {
+export function getContentFromToken(req: Request) {
   const Authorization = req.get("Authorization");
   if (Authorization) {
     const token = Authorization.replace("Bearer ", "");
     try {
       const verifiedToken = verify(token, config.app_secret) as Token;
       if(verifiedToken) {
-        return verifiedToken.userId;
+        return {
+          userId: +verifiedToken.userId,
+          role: verifiedToken.role,
+        };
       }
-      return null;
+      return failObj;
     } catch (e) {
-      return null;
+      return failObj;
     }
   }
-  return null;
+  return failObj;
 }

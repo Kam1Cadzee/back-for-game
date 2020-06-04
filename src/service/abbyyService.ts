@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from '../config';
-import {IMinicard, IWordList} from '../typing/ABBYYTypes';
+import {IAnotherWordList, IMinicard, IWordList} from '../typing/ABBYYTypes';
 import {generateKey} from '../utils/keys';
 
 const instance = axios.create({
@@ -73,10 +73,7 @@ const serviceABBYY = {
       return null;
     }
     catch (e) {
-      if(e.response === undefined) {
-        console.log(e);
-      }
-      return e.response.status;
+      return null;
     }
   },
   wordList: async (prefix: string) => {
@@ -95,10 +92,24 @@ const serviceABBYY = {
       return null;
     }
     catch (e) {
-      if(e.response === undefined) {
-        console.log(e);
-      }
-      return e.response.status;
+      return null;
+    }
+  },
+  anotherWordList: async (prefix: string) => {
+    try {
+      const res = await instance.get('https://api.lingvolive.com/Translation/WordListPart', {
+        params: {
+          prefix,
+          srcLang: 1033,
+          dstLang: 1049,
+          pageSize: 30,
+        }
+      });
+      const data: IAnotherWordList[] = res.data.items;
+      return data;
+    }
+    catch (e) {
+      return null;
     }
   }
 };

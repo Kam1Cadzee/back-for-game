@@ -20,6 +20,8 @@ model User {
   lastName  String   @default("")
   password  String   @default("")
   entities  Entity[]
+  role      Role     @default(STANDARD)
+  Word      Word[]
 }
 
 model PartOfSpeechDesc {
@@ -28,6 +30,11 @@ model PartOfSpeechDesc {
   ru   String
   ua   String
   en   String
+}
+
+enum Role {
+  ADMIN
+  STANDARD
 }
 
 enum PartOfSpeech {
@@ -53,15 +60,19 @@ model Irrverb {
 }
 
 model Entity {
-  id        Int        @default(autoincrement()) @id
-  title     String
-  words     Word[]
-  User      User       @relation(fields: [userId], references: [id])
-  userId    Int
-  phrases   Phrase[]
-  sentences Sentence[]
-  irrverb   Irrverb?   @relation(fields: [irrverbId], references: [id])
-  irrverbId Int?
+  id           Int        @default(autoincrement()) @id
+  title        String
+  words        Word[]
+  User         User       @relation(fields: [userId], references: [id])
+  userId       Int
+  phrases      Phrase[]
+  sentences    Sentence[]
+  irrverb      Irrverb?   @relation(fields: [irrverbId], references: [id])
+  irrverbId    Int?
+  isNeededEdit Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+  @@unique([title, userId], name: "unique_title_userId")
 }
 
 model Word {
@@ -69,29 +80,46 @@ model Word {
   en        String
   translate Translate[]  @relation(references: [id])
   type      PartOfSpeech @default(OTHER)
-  entity    Entity       @relation(fields: [entityId], references: [id])
-  entityId  Int
+  entities  Entity[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
+  User      User         @relation(fields: [userId], references: [id])
+  userId    Int
+  @@unique([en, userId], name: "AnotherUser_firstname_lastname_key")
 }
 
 model Translate {
-  id    Int          @default(autoincrement()) @id
-  ru    String
-  type  PartOfSpeech @default(OTHER)
-  words Word[]       @relation(references: [id])
+  id        Int          @default(autoincrement()) @id
+  ru        String       @unique
+  type      PartOfSpeech @default(OTHER)
+  words     Word[]       @relation(references: [id])
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now())
 }
 
 model Phrase {
-  id       Int     @default(autoincrement()) @id
-  phrase   String
+  id       Int      @default(autoincrement()) @id
+  phrase   String   @unique
   ru       String
-  Entity   Entity? @relation(fields: [entityId], references: [id])
-  entityId Int?
+  entities Entity[]
 }
 
 model Sentence {
-  id       Int     @default(autoincrement()) @id
-  sentence String
+  id       Int      @default(autoincrement()) @id
+  sentence String   @unique
   ru       String
-  Entity   Entity? @relation(fields: [entityId], references: [id])
-  entityId Int?
+  entities Entity[]
+}
+
+model MobileApp {
+  id        Int          @default(autoincrement()) @id
+  createdAt DateTime     @default(now())
+  version   String
+  url       String
+  status    StatusMobile @default(WORK)
+}
+
+enum StatusMobile {
+  WORK
+  DEPRECATED
 }

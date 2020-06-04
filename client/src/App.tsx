@@ -1,25 +1,70 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
+import {BrowserRouter, Route, Switch} from 'react-router-dom';
+import AuthPage from './pages/AuthPage';
+import LayoutPage from './pages/LayoutPage';
+import ApolloClient, {gql} from 'apollo-boost';
+import {ApolloProvider, useMutation, useQuery} from '@apollo/react-hooks';
+import { InMemoryCache, defaultDataIdFromObject } from 'apollo-cache-inmemory';
+import FRAGMENTS from './graphql/fragments';
+import QUERIES from './graphql/queries';
+import 'antd/dist/antd.css';
 import './App.css';
 
+const cache = new InMemoryCache();
+
+const client = new ApolloClient({
+  uri: 'http://192.168.31.66:3005/graphql',
+  cache,
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  },
+  onError: error => {
+    console.log('------------------');
+    console.log(error);
+    console.log('------------------');
+  }
+});
+cache.writeData({
+  data: {
+    isAuth: false,
+    currentUser: null,
+  },
+});
 function App() {
+  const Content = () => {
+    const [refresh] = useMutation(QUERIES.REFRESH_USER, {
+      update: (proxy, mutationResult) => {
+        console.log(mutationResult)
+        proxy.writeData({
+          data: {
+            isAuth: true,
+            currentUser: mutationResult.data.refreshUser
+          }
+        });
+      },
+      onError: error => {}
+    });
+
+    useEffect(() => {
+      refresh();
+    }, []);
+
+    return (
+      <div className="App">
+          <Switch>
+            <Route exact path="/" component={AuthPage}/>
+            <Route path="/main/:item?" component={LayoutPage}/>
+          </Switch>
+      </div>
+    )
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+      <Content/>
+      </BrowserRouter>
+    </ApolloProvider>
   );
 }
 

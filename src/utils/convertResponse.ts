@@ -1,33 +1,17 @@
 import {IResponseDictionary} from '../typing/AZURETypes';
-import {IWordList} from '../typing/ABBYYTypes';
+import {IAnotherWordList, IWordList} from '../typing/ABBYYTypes';
 import {PartOfSpeech} from '../type-graphql/enums';
 import detectPartOfSpeech from './partOfSpeech';
+import {OtherWord, PhraseCustom, Translation} from '../graphql/translate/Translate.types';
 
-interface INormalizeDictionary {
-  translations: {
-    tag: PartOfSpeech,
-    translation: string
-  }[];
+export interface INormalizeDictionary {
+  translations: Translation[];
   backTranslations: string[];
 }
 
-interface INormalizeWordList {
-  translation: {
-    tag: PartOfSpeech,
-    translation: string,
-  } | null,
-  otherWords: {
-    tag: PartOfSpeech,
-    en: string,
-    ru: {
-      tag: PartOfSpeech,
-      translation: string
-    }[],
-  }[];
-  phrases: {
-    word: string;
-    translation: string;
-  }[]
+export interface INormalizeWordList {
+  words: OtherWord[];
+  phrases: PhraseCustom[]
 }
 
 class ConvertResponse {
@@ -39,8 +23,8 @@ class ConvertResponse {
 
     data.translations.forEach(t => {
       result.translations.push({
-        tag: t.posTag,
-        translation: t.normalizedTarget
+        type: t.posTag,
+        ru: t.normalizedTarget
       });
       result.backTranslations.push(...t.backTranslations.map(b => b.normalizedText))
     });
@@ -48,11 +32,9 @@ class ConvertResponse {
   };
 
   static convertWordList = (data: IWordList) => {
-    const findItem = data.Headings.find(d => d.OriginalWord === '');
     const result: INormalizeWordList = {
       phrases: [],
-      otherWords: [],
-      translation: null
+      words: []
     };
     const expressions = data.Headings.filter(d => d.OriginalWord !== '').map(d => ({
       word: d.Heading,
@@ -60,30 +42,51 @@ class ConvertResponse {
     }));
     expressions.forEach(async exp => {
       if(exp.word.indexOf(' ') === -1) {
-        result.otherWords.push({
-          tag: await detectPartOfSpeech.getPartOfSpeech(exp.word),
-          ru: ConvertResponse.getArray(exp.translation).map(t => ({translation: t, tag: PartOfSpeech.OTHER})),
+        const type = await detectPartOfSpeech.getPartOfSpeech(exp.word);
+        result.words.push({
+          type,
+          translate: ConvertResponse.getArray(exp.translation).map(t => ({ru: t, type})),
           en: exp.word
         })
       }
       else {
         result.phrases.push({
-          translation: exp.translation,
-          word: exp.word
+          ru: exp.translation,
+          phrase: exp.word
         })
       }
     });
 
-    if (findItem) {
-      result.translation = {
-        tag: PartOfSpeech.OTHER,
-        translation: findItem.Translation,
-      }
-    }
-
     return result;
   };
 
+
+  static anotherConvertWordList = (data: IAnotherWordList[], originalWord: string) => {
+    const result: INormalizeWordList = {
+      phrases: [],
+      words: []
+    };
+    const expressions = data.filter(d => d.heading !== originalWord);
+
+    expressions.forEach(async exp => {
+      if(exp.heading.indexOf(' ') === -1) {
+        const type = await detectPartOfSpeech.getPartOfSpeech(exp.heading);
+        result.words.push({
+          type,
+          translate: ConvertResponse.getArray(exp.lingvoTranslations).map(t => ({ru: t, type})),
+          en: exp.heading
+        })
+      }
+      else {
+        result.phrases.push({
+          ru: exp.lingvoTranslations,
+          phrase: exp.heading
+        })
+      }
+    });
+
+    return result;
+  };
 
   static changeSeparationSymbol = (str: string) => {
     return str.replace(/;/g, ',')
