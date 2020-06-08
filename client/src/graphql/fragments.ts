@@ -22,6 +22,9 @@ const FRAGMENTS = {
       id,
       en,
       type,
+      disconnectTranslate {
+        id
+      }
       translate {
         ru,
         id,
@@ -37,7 +40,10 @@ const FRAGMENTS = {
       id, 
       sentence,
       ru
-    } 
+    },
+    disconnectWords {
+      id
+    }
   `
 };
 

@@ -73,42 +73,52 @@ model Entity {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @default(now())
   @@unique([title, userId], name: "unique_title_userId")
+
+  disconnectWords     Word[]     @relation("disconnectEntities")
+  disconnectPhrases   Phrase[]   @relation("disconnectPhrases")
+  disconnectSentences Sentence[] @relation("disconnectSentences")
 }
 
 model Word {
   id        Int          @default(autoincrement()) @id
   en        String
-  translate Translate[]  @relation(references: [id])
+  translate Translate[]
   type      PartOfSpeech @default(OTHER)
   entities  Entity[]
   createdAt DateTime     @default(now())
   updatedAt DateTime     @default(now())
   User      User         @relation(fields: [userId], references: [id])
   userId    Int
+
+  disconnectEntities  Entity[]    @relation("disconnectEntities")
+  disconnectTranslate Translate[] @relation("disconnectTranslate")
   @@unique([en, userId], name: "AnotherUser_firstname_lastname_key")
 }
 
 model Translate {
-  id        Int          @default(autoincrement()) @id
-  ru        String       @unique
-  type      PartOfSpeech @default(OTHER)
-  words     Word[]       @relation(references: [id])
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @default(now())
+  id              Int          @default(autoincrement()) @id
+  ru              String       @unique
+  type            PartOfSpeech @default(OTHER)
+  words           Word[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @default(now())
+  disconnectWords Word[]       @relation("disconnectTranslate")
 }
 
 model Phrase {
-  id       Int      @default(autoincrement()) @id
-  phrase   String   @unique
-  ru       String
-  entities Entity[]
+  id                 Int      @default(autoincrement()) @id
+  phrase             String   @unique
+  ru                 String
+  entities           Entity[]
+  disconnectEntities Entity[] @relation("disconnectPhrases")
 }
 
 model Sentence {
-  id       Int      @default(autoincrement()) @id
-  sentence String   @unique
-  ru       String
-  entities Entity[]
+  id                 Int      @default(autoincrement()) @id
+  sentence           String   @unique
+  ru                 String
+  entities           Entity[]
+  disconnectEntities Entity[] @relation("disconnectSentences")
 }
 
 model MobileApp {

@@ -8,8 +8,7 @@ import EntityEditCard from '../components/CreatePage/EntityEditCard';
 
 const CreatePage = () => {
   const [entities, setEntities] = useState([] as IEntity[]);
-  const {refetch} = useQuery(QUERIES.GET_ENTITIES_BY_WORD, {
-    skip: true,
+  const {refetch, data} = useQuery(QUERIES.GET_ENTITIES_BY_WORD, {
   });
   const {refetch: refetchParse} = useQuery(QUERIES.TRANSLATE_WORD_WITH_PARSE, {
     skip: true,
@@ -19,7 +18,7 @@ const CreatePage = () => {
     let res = await refetch({
       word: search
     });
-    if(res.data.getEntitiesByWord.length === 0) {
+    if(res && res.data.getEntitiesByWord.length === 0) {
       res = await refetchParse({
         word: search
       });
@@ -29,7 +28,7 @@ const CreatePage = () => {
       setEntities(res.data.getEntitiesByWord);
     }
   };
-  console.log(entities)
+  console.log(data)
   return (
     <Row>
       <Col span={24}>
@@ -48,7 +47,7 @@ const CreatePage = () => {
         </Form>
       </Col>
       {
-        entities.map((e, index) => {
+        data && data.getEntitiesByWord.map((e: any, index: any) => {
           return (
             <Col flex="1" key={e.id || index}>
               <EntityEditCard entity={e}/>

@@ -15,6 +15,7 @@ export interface IWord  {
   "en": string,
   "type": PartOfSpeech,
   "translate": ITranslate[],
+  disconnectTranslate:IDisconnectWord[]
 }
 export interface IIrrVerb {
   id: number,
@@ -36,8 +37,11 @@ export interface IEntity  {
   "phrases": IPhrase[],
   "words": IWord[],
   backTranslations?: string[] | null,
+  disconnectWords: IDisconnectWord[];
 }
-
+export interface IDisconnectWord {
+  id: number;
+}
 export interface ITranslateWordWithParseReturn {
   tag: PartOfSpeech;
   original: string;

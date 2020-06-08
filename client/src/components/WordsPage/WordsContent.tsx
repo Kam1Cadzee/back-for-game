@@ -1,15 +1,17 @@
 import React from 'react';
-import {IWord} from '../../typings/IEntity';
+import {IDisconnectWord, IWord} from '../../typings/IEntity';
 import {Table} from 'antd';
 import {TagPartOfSpeech} from '../../utils/tagPartOfSpeech';
 
 const { Column } = Table;
 
 interface IWordsContentProps {
-  words: IWord[]
+  words: IWord[],
+  disconnectWords: IDisconnectWord[];
 }
-const WordsContent = ({words}:IWordsContentProps) => {
-  const data = words.map((w, i) => ({
+const WordsContent = ({words, disconnectWords}:IWordsContentProps) => {
+
+  const data = words.filter(w => !disconnectWords.some(d => d.id === w.id!)).map((w, i) => ({
     key: w.id,
     en: w.en,
     type: w.type,
@@ -26,7 +28,6 @@ const WordsContent = ({words}:IWordsContentProps) => {
         dataIndex="type"
         key="type"
         render={tags => {
-          console.log(tags);
           return <TagPartOfSpeech type={tags} />
         }}
       />

@@ -1,4 +1,4 @@
-import {ArgsType, Field, InputType, ObjectType} from 'type-graphql';
+import {Arg, Args, ArgsType, Field, InputType, ObjectType} from 'type-graphql';
 import {PartOfSpeech} from '../../type-graphql/enums';
 import {Irrverb} from '../../type-graphql/models';
 import {PhraseCreateInput, PhraseUpdateInput, SentenceCreateInput} from '../../type-graphql/resolvers/inputs';
@@ -128,4 +128,28 @@ export class TranslateReturn {
 
   @Field(returns => PartOfSpeech)
   type: PartOfSpeech;
+}
+
+@ObjectType()
+export class TranslateWordReturn {
+  @Field(returns => PartOfSpeech)
+  type: PartOfSpeech;
+
+  @Field(returns => [Translation])
+  translate: Translation[]
+}
+
+@ArgsType()
+export class CreateOrUpdateWordWithTranslateArgs {
+  @Field()
+  entityId: number;
+
+  @Field(returns => PartOfSpeech)
+  type: PartOfSpeech;
+
+  @Field()
+  en: string;
+
+  @Field(returns => [String])
+  translate: string[]
 }

@@ -19,7 +19,6 @@ const TranslateContent = ({word}: ITranslateContentProps) => {
         dataIndex="type"
         key="type"
         render={tags => {
-          console.log(tags);
           return <TagPartOfSpeech type={tags} />
         }}
       />

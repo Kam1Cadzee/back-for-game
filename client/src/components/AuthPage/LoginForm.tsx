@@ -14,7 +14,6 @@ const tailLayout = {
 const LoginForm = () => {
   const [login, { data, error }] = useMutation(QUERIES.LOGIN, {
     update: (proxy, mutationResult) => {
-      console.log(mutationResult)
       proxy.writeData({
         data: {
           isAuth: true,

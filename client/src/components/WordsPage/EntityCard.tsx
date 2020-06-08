@@ -43,6 +43,7 @@ const EntityCard = ({entity}:IEntityCardProps) => {
     setKey(key);
   };
 
+
   const word = entity.words.find(w => w.en === entity.title)!;
   const words = entity.words.filter(w => w.en !== entity.title);
   const Content = tabListNoTitle.find(t => t.key === key)!.component;
@@ -56,7 +57,7 @@ const EntityCard = ({entity}:IEntityCardProps) => {
         title={entity.title}
         extra={<Button>Edit</Button>}
       >
-        <Content word={word} words={words} phrases={entity.phrases} />
+        <Content word={word} disconnectWords={entity.disconnectWords} words={words} phrases={entity.phrases} />
       </Card>
     </Card.Grid>
   )

@@ -14,19 +14,27 @@ export type TempTypes =
                       'PartOfSpeechDesc' | 
             'TranslateRelationsResolver' | 
                     'TranslateWordsArgs' | 
+          'TranslateDisconnectWordsArgs' | 
                'EntityRelationsResolver' | 
+             'EntityDisconnectWordsArgs' | 
                      'EntityPhrasesArgs' | 
                    'EntitySentencesArgs' | 
                        'EntityWordsArgs' | 
+           'EntityDisconnectPhrasesArgs' | 
+         'EntityDisconnectSentencesArgs' | 
                'PhraseRelationsResolver' | 
+          'PhraseDisconnectEntitiesArgs' | 
                     'PhraseEntitiesArgs' | 
                  'UserRelationsResolver' | 
                       'UserEntitiesArgs' | 
                           'UserWordArgs' | 
              'SentenceRelationsResolver' | 
+        'SentenceDisconnectEntitiesArgs' | 
                   'SentenceEntitiesArgs' | 
                  'WordRelationsResolver' | 
                      'WordTranslateArgs' | 
+            'WordDisconnectEntitiesArgs' | 
+           'WordDisconnectTranslateArgs' | 
                       'WordEntitiesArgs' | 
               'IrrverbRelationsResolver' | 
            'DeleteManyMobileAppResolver' | 
@@ -215,17 +223,26 @@ export type TempTypes =
                           'EntityFilter' | 
           'EntityCreateWithoutUserInput' | 
                         'DateTimeFilter' | 
+'SentenceCreateManyWithoutDisconnectEntitiesInput' | 
                         'WordWhereInput' | 
     'SentenceCreateWithoutEntitiesInput' | 
       'PhraseCreateWithoutEntitiesInput' | 
+'TranslateUpdateWithoutDisconnectWordsDataInput' | 
+'TranslateUpdateManyWithoutDisconnectWordsInput' | 
                             'WordFilter' | 
 'WordUpsertWithWhereUniqueWithoutTranslateInput' | 
                             'RoleFilter' | 
                    'TranslateWhereInput' | 
     'WordUpdateWithoutEntitiesDataInput' | 
 'AnotherUser_firstname_lastname_keyCompoundUniqueInput' | 
+'WordCreateManyWithoutDisconnectEntitiesInput' | 
                       'WordOrderByInput' | 
         'WordCreateManyWithoutUserInput' | 
+'WordUpdateWithWhereUniqueWithoutDisconnectEntitiesInput' | 
+'EntityUpdateWithoutDisconnectWordsDataInput' | 
+'EntityUpdateManyWithoutDisconnectWordsInput' | 
+'EntityCreateManyWithoutDisconnectSentencesInput' | 
+'SentenceCreateWithoutDisconnectEntitiesInput' | 
 'EntityUpsertWithWhereUniqueWithoutPhrasesInput' | 
         'UserCreateWithoutEntitiesInput' | 
                     'PhraseOrderByInput' | 
@@ -247,6 +264,7 @@ export type TempTypes =
                   'WordScalarWhereInput' | 
    'EntityUpdateWithoutIrrverbDataInput' | 
                        'WordUpdateInput' | 
+'TranslateCreateWithoutDisconnectWordsInput' | 
 'WordUpsertWithWhereUniqueWithoutUserInput' | 
 'EntityUpdateWithWhereUniqueWithoutUserInput' | 
               'SentenceScalarWhereInput' | 
@@ -254,15 +272,22 @@ export type TempTypes =
      'EntityUpdateWithoutWordsDataInput' | 
 'TranslateUpdateWithWhereUniqueWithoutWordsInput' | 
 'UserUpdateOneRequiredWithoutEntitiesInput' | 
+'EntityUpsertWithWhereUniqueWithoutDisconnectSentencesInput' | 
 'SentenceUpsertWithWhereUniqueWithoutEntitiesInput' | 
 'SentenceCreateManyWithoutEntitiesInput' | 
+'SentenceUpdateManyWithoutDisconnectEntitiesInput' | 
+'WordUpsertWithWhereUniqueWithoutDisconnectTranslateInput' | 
+'SentenceUpdateWithoutDisconnectEntitiesDataInput' | 
       'EntityUpdateManyWithoutUserInput' | 
                 'EntityScalarWhereInput' | 
                      'PhraseCreateInput' | 
                     'EntityOrderByInput' | 
                           'StringFilter' | 
+'WordUpdateWithoutDisconnectEntitiesDataInput' | 
                   'SentenceOrderByInput' | 
   'PhraseUpdateWithoutEntitiesDataInput' | 
+'EntityUpdateManyWithoutDisconnectPhrasesInput' | 
+'WordUpdateManyWithoutDisconnectEntitiesInput' | 
             'WordCreateWithoutUserInput' | 
       'MobileAppUpdateManyMutationInput' | 
 'TranslateUpsertWithWhereUniqueWithoutWordsInput' | 
@@ -271,7 +296,9 @@ export type TempTypes =
        'EntityUpsertWithoutIrrverbInput' | 
       'EntityCreateManyWithoutUserInput' | 
                    'SentenceUpdateInput' | 
+'PhraseCreateWithoutDisconnectEntitiesInput' | 
                      'EntityCreateInput' | 
+'WordUpdateWithoutDisconnectTranslateDataInput' | 
                  'TranslateOrderByInput' | 
          'PhraseUpdateManyMutationInput' | 
                         'UserWhereInput' | 
@@ -282,21 +309,29 @@ export type TempTypes =
     'WordUpdateManyWithWhereNestedInput' | 
                       'PhraseWhereInput' | 
                     'PartOfSpeechFilter' | 
+'EntityUpdateWithWhereUniqueWithoutDisconnectPhrasesInput' | 
                   'MobileAppUpdateInput' | 
+'EntityCreateWithoutDisconnectWordsInput' | 
      'UserCreateOneWithoutEntitiesInput' | 
         'WordUpdateManyWithoutUserInput' | 
     'IrrverbUpdateOneWithoutEntityInput' | 
     'EntityUpdateOneWithoutIrrverbInput' | 
+'EntityUpdateManyWithoutDisconnectSentencesInput' | 
                        'UserUpdateInput' | 
 'EntityUpsertWithWhereUniqueWithoutSentencesInput' | 
   'PhraseUpdateManyWithWhereNestedInput' | 
+'WordCreateWithoutDisconnectTranslateInput' | 
            'PartOfSpeechDescCreateInput' | 
      'EntityCreateManyWithoutWordsInput' | 
+'WordUpsertWithWhereUniqueWithoutDisconnectEntitiesInput' | 
+'EntityUpdateWithoutDisconnectPhrasesDataInput' | 
        'WordCreateWithoutTranslateInput' | 
       'TranslateUpdateManyMutationInput' | 
                      'IrrverbWhereInput' | 
             'PartOfSpeechDescWhereInput' | 
+'EntityCreateWithoutDisconnectSentencesInput' | 
 'EntityUpdateWithWhereUniqueWithoutWordsInput' | 
+'EntityUpdateWithoutDisconnectSentencesDataInput' | 
  'EntityUpdateWithoutSentencesDataInput' | 
   'TranslateCreateManyWithoutWordsInput' | 
                     'StatusMobileFilter' | 
@@ -304,9 +339,12 @@ export type TempTypes =
              'MobileAppWhereUniqueInput' | 
                    'SentenceCreateInput' | 
    'WordCreateManyWithoutTranslateInput' | 
+'PhraseUpdateWithWhereUniqueWithoutDisconnectEntitiesInput' | 
                      'EntityUpdateInput' | 
+'PhraseUpdateManyWithoutDisconnectEntitiesInput' | 
    'EntityCreateManyWithoutPhrasesInput' | 
 'WordUpdateWithWhereUniqueWithoutTranslateInput' | 
+'PhraseUpdateWithoutDisconnectEntitiesDataInput' | 
        'IrrverbCreateWithoutEntityInput' | 
  'UserUpdateOneRequiredWithoutWordInput' | 
                'WordUpdateManyDataInput' | 
@@ -317,9 +355,12 @@ export type TempTypes =
                     'SentenceWhereInput' | 
                          'BooleanFilter' | 
                   'MobileAppCreateInput' | 
+'PhraseCreateManyWithoutDisconnectEntitiesInput' | 
+'SentenceUpdateWithWhereUniqueWithoutDisconnectEntitiesInput' | 
           'PartOfSpeechDescOrderByInput' | 
       'TranslateCreateWithoutWordsInput' | 
 'PhraseUpsertWithWhereUniqueWithoutEntitiesInput' | 
+'WordCreateWithoutDisconnectEntitiesInput' | 
                        'UserCreateInput' | 
            'PartOfSpeechDescUpdateInput' | 
                    'MobileAppWhereInput' | 
@@ -331,20 +372,29 @@ export type TempTypes =
          'UserCreateOneWithoutWordInput' | 
 'EntityUpsertWithWhereUniqueWithoutUserInput' | 
 'WordUpdateWithWhereUniqueWithoutUserInput' | 
+'WordUpdateManyWithoutDisconnectTranslateInput' | 
   'EntityUpdateManyWithWhereNestedInput' | 
                           'PhraseFilter' | 
+'EntityUpsertWithWhereUniqueWithoutDisconnectPhrasesInput' | 
+'WordCreateManyWithoutDisconnectTranslateInput' | 
         'WordUpdateWithoutUserDataInput' | 
+'SentenceUpsertWithWhereUniqueWithoutDisconnectEntitiesInput' | 
           'TranslateUpdateManyDataInput' | 
 'SentenceUpdateManyWithoutEntitiesInput' | 
          'EntityCreateWithoutWordsInput' | 
                 'EntityWhereUniqueInput' | 
+'EntityCreateWithoutDisconnectPhrasesInput' | 
     'UserUpdateWithoutEntitiesDataInput' | 
        'EntityCreateWithoutIrrverbInput' | 
                              'IntFilter' | 
+'TranslateCreateManyWithoutDisconnectWordsInput' | 
                       'UserOrderByInput' | 
+'EntityUpsertWithWhereUniqueWithoutDisconnectWordsInput' | 
+'TranslateUpsertWithWhereUniqueWithoutDisconnectWordsInput' | 
 'TranslateUpdateManyWithWhereNestedInput' | 
               'SentenceWhereUniqueInput' | 
 'PhraseUpdateWithWhereUniqueWithoutEntitiesInput' | 
+'EntityCreateManyWithoutDisconnectWordsInput' | 
                     'IrrverbCreateInput' | 
            'WordUpdateManyMutationInput' | 
     'WordCreateManyWithoutEntitiesInput' | 
@@ -355,8 +405,10 @@ export type TempTypes =
                   'TranslateUpdateInput' | 
              'TranslateWhereUniqueInput' | 
                   'WordWhereUniqueInput' | 
+'EntityUpdateWithWhereUniqueWithoutDisconnectWordsInput' | 
                 'PhraseScalarWhereInput' | 
 'SentenceUpdateWithoutEntitiesDataInput' | 
+'EntityUpdateWithWhereUniqueWithoutDisconnectSentencesInput' | 
              'EntityUpdateManyDataInput' | 
         'WordCreateWithoutEntitiesInput' | 
   'PhraseCreateManyWithoutEntitiesInput' | 
@@ -371,6 +423,10 @@ export type TempTypes =
                      'PhraseUpdateInput' | 
                       'EntityWhereInput' | 
                    'IrrverbOrderByInput' | 
+'PhraseUpsertWithWhereUniqueWithoutDisconnectEntitiesInput' | 
   'TranslateUpdateManyWithoutWordsInput' | 
    'WordUpdateWithoutTranslateDataInput' | 
-        'UserUpsertWithoutEntitiesInput';
+        'UserUpsertWithoutEntitiesInput' | 
+'EntityCreateManyWithoutDisconnectPhrasesInput' | 
+'TranslateUpdateWithWhereUniqueWithoutDisconnectWordsInput' | 
+'WordUpdateWithWhereUniqueWithoutDisconnectTranslateInput';

@@ -12,7 +12,6 @@ const withAuthRedirect = (Component: any) => {
 
     });
 
-    console.log(data)
     let redirect = '/main';
     if(props.location.state && props.location.state.from) {
       redirect = props.location.state.from;
