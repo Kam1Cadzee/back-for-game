@@ -1,23 +1,28 @@
-import React, {useEffect, useState} from 'react';
-import {Row, Button, Modal, Popover, Form, Input, Select} from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import React, {useState} from 'react';
+import {Button, Form, Input, Popover, Row, Select} from 'antd';
+import {PlusOutlined} from '@ant-design/icons';
 import SelectPartOfSpeech from './SelectPartOfSpeech';
 import {PartOfSpeech} from '../../typings/PartOfSpeech';
-import {useMutation, useQuery} from '@apollo/react-hooks';
+import {useQuery} from '@apollo/react-hooks';
 import QUERIES from '../../graphql/queries';
-import {TranslateWordReturn} from '../../typings/GENERATE_TYPES';
-const { Search } = Input;
-const { Option } = Select;
+
+const {Search} = Input;
+const {Option} = Select;
+const {Group} = Button;
 
 interface ITitleTableProps {
-  idEntity: number;
   onAdd: any;
+  onUpdate: any;
+  loadingUpdate: boolean;
+  disabled: boolean;
 }
-interface IContentTitleTableProps extends ITitleTableProps{
+
+interface IContentTitleTableProps {
+  onAdd: any;
   onClose: any;
 }
 
-const ContentTitleTable = ({idEntity, onClose, onAdd}:IContentTitleTableProps) => {
+const ContentTitleTable = ({onClose, onAdd}: IContentTitleTableProps) => {
   const [options, setOptions] = useState([]);
   const {refetch} = useQuery(QUERIES.TRANSLATE_WORD, {
     skip: true
@@ -31,19 +36,19 @@ const ContentTitleTable = ({idEntity, onClose, onAdd}:IContentTitleTableProps) =
   };
 
   const handleChange = (value: PartOfSpeech) => {
-    form.setFieldsValue({ type: value });
+    form.setFieldsValue({type: value});
   };
 
   const handleSearch = async (value: string, event: any) => {
     event.preventDefault();
-    if(value === '') return ;
+    if (value === '') return;
     const res = await refetch({
       word: value
     });
 
     const translateWord: any = res.data.translateWord;
     setOptions(translateWord.translate.map((t: any) => t.ru));
-    form.setFieldsValue({ translate: translateWord.translate.map((t: any) => t.ru) });
+    form.setFieldsValue({translate: translateWord.translate.map((t: any) => t.ru)});
     handleChange(translateWord.type);
   };
 
@@ -55,15 +60,15 @@ const ContentTitleTable = ({idEntity, onClose, onAdd}:IContentTitleTableProps) =
     >
       <Form.Item
         name="en"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        rules={[{required: true, message: 'Please input your username!'}]}
       >
-        <Search onSearch={handleSearch} placeholder="Word" enterButton />
+        <Search onSearch={handleSearch} placeholder="Word" enterButton/>
       </Form.Item>
       <Form.Item
         name="translate"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        rules={[{required: true, message: 'Please input your username!'}]}
       >
-        <Select mode="tags"  tokenSeparators={[',']}>
+        <Select mode="tags" tokenSeparators={[',']}>
           {
             options.map(o => {
               return (
@@ -76,20 +81,20 @@ const ContentTitleTable = ({idEntity, onClose, onAdd}:IContentTitleTableProps) =
       <Input.Group compact size="small">
         <Form.Item
           name="type"
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          rules={[{required: true, message: 'Please input your username!'}]}
           initialValue={PartOfSpeech.OTHER}
         >
-          <SelectPartOfSpeech onChange={handleChange} />
+          <SelectPartOfSpeech onChange={handleChange}/>
         </Form.Item>
         <Form.Item>
-          <Button size="large" type="primary" htmlType="submit" shape="circle" icon={<PlusOutlined />} />
+          <Button size="large" type="primary" htmlType="submit" shape="circle" icon={<PlusOutlined/>}/>
         </Form.Item>
       </Input.Group>
     </Form>
   )
 };
 
-const TitleTable = ({idEntity, onAdd}: ITitleTableProps) => {
+const TitleTable = ({onAdd, onUpdate, loadingUpdate, disabled}: ITitleTableProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleOk = () => {
@@ -102,8 +107,9 @@ const TitleTable = ({idEntity, onAdd}: ITitleTableProps) => {
   return (
     <Row justify="end">
       <Button.Group>
+        <Button onClick={onUpdate} type="primary" disabled={disabled || loadingUpdate} loading={loadingUpdate}>Update</Button>
         <Popover
-          content={<ContentTitleTable onClose={handleOk} idEntity={idEntity} onAdd={onAdd}/>}
+          content={<ContentTitleTable onClose={handleOk} onAdd={onAdd}/>}
           trigger="click"
           visible={isShow}
           onVisibleChange={handleVisibleChange}

@@ -1,27 +1,30 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import {IDisconnectWord, IEntity, IWord} from '../../typings/IEntity';
-import {Button, Form, Input, Popconfirm, Select, Table} from 'antd';
+import {IDisconnectWord, IEntity, ITranslate, IWord} from '../../typings/IEntity';
+import {Button, Col, Form, Input, Popconfirm, Row, Table, Tooltip} from 'antd';
+import {DeleteOutlined} from '@ant-design/icons';
 import './table.css';
 import {PartOfSpeech} from '../../typings/PartOfSpeech';
-import {TagPartOfSpeech} from '../../utils/tagPartOfSpeech';
 import {generateClassName} from '../../utils/generateClassName';
 import {useMutation} from '@apollo/react-hooks';
 import {MUTATION} from '../../graphql/mutation';
 import {defaultDataIdFromObject, gql} from 'apollo-boost';
 import TitleTable from './TitleTable';
 import SelectPartOfSpeech from './SelectPartOfSpeech';
-import QUERIES from '../../graphql/queries';
+import AddTranslate from './AddTranslate';
+import {isEmptyObject} from '../../utils/isEmptyObject';
 
 const {Column} = Table;
 
 interface IEntityEditCardProps {
   entity: IEntity;
 }
+
 interface ICreateWord {
   en: string,
   translate: string[],
   type: PartOfSpeech,
 }
+
 const EditableContext = React.createContext(null as any);
 
 const EditableRow = ({index, ...props}: any) => {
@@ -129,6 +132,7 @@ interface IDataColumn {
   en: string;
   type: PartOfSpeech;
   children: IDataChildColumn[];
+  dataIndex: string;
 }
 
 interface IDataChildColumn {
@@ -137,10 +141,14 @@ interface IDataChildColumn {
   type: PartOfSpeech;
   count: number;
   idWord: number;
+  dataIndex: string;
+}
+
+interface ICache {
+  [id: string]: IWord;
 }
 
 const EntityEditCard = ({entity}: IEntityEditCardProps) => {
-  console.log(entity)
   const [mutationDeleteWord] = useMutation(MUTATION.deleteWord, {
     update: (proxy, {data: {updateWord: {id}}}) => {
       const idFromObject = defaultDataIdFromObject({__typename: 'Entity', id: entity.id})!;
@@ -183,11 +191,14 @@ const EntityEditCard = ({entity}: IEntityEditCardProps) => {
     },
   });
   const [mutationCreateWord] = useMutation(MUTATION.createOrUpdateWordWithTranslate);
+  const [mutationUpdate, {loading: loadingUpdate}] = useMutation(MUTATION.updateAllEntity);
+  const cache = useRef({} as ICache);
   const isAdd = !entity.id;
-  const [noDataWords, setNoDataWords] = useState(getDataOfFilter(entity.words, []));
+  const [noDataWords, setNoDataWords] = useState(entity.words);
+  const [disconnectWords, setDisconnectWords] = useState(entity.disconnectWords);
 
-  const truthDataWords = isAdd ? noDataWords : getDataOfFilter(entity.words, entity.disconnectWords);
-  console.log(truthDataWords)
+  const truthDataWords = getDataOfFilter(noDataWords, disconnectWords);
+
   const components = {
     body: {
       row: EditableRow,
@@ -197,151 +208,168 @@ const EntityEditCard = ({entity}: IEntityEditCardProps) => {
 
   const handleDelete = async (dataDelete: IDataColumn & IDataChildColumn) => {
     if (dataDelete.children) {
-      if (isAdd) {
-        setNoDataWords(noDataWords.filter(item => item.key !== dataDelete.key));
-      } else {
-        await mutationDeleteWord({
-          variables: {
-            idEntity: entity.id,
-            idWord: dataDelete.key
-          }
-        })
-      }
+      setDisconnectWords(dis => {
+        return [...dis, {id: dataDelete.key}];
+      });
     } else {
-      if(isAdd) {
-        const topLevelIndex = noDataWords.findIndex(item => item.children.some(t => t.key === dataDelete.key))!;
-        const topLevel = noDataWords[topLevelIndex];
-        if (topLevel.children.length === 1) {
-          setNoDataWords(noDataWords.filter(item => item.key !== topLevel.key));
-        } else {
-          topLevel.children = topLevel.children.filter(item => item.key !== dataDelete.key);
-          noDataWords[topLevelIndex] = topLevel;
-          setNoDataWords([...noDataWords]);
-        }
-      }
-      else {
-        await mutationDeleteTranslate({
-          variables: {
-            idTransalte: dataDelete.key,
-            idWord: dataDelete.idWord
-          }
-        });
-      }
+      const newDataWords = [...noDataWords];
+      const findWord = newDataWords.find(w => w.id === dataDelete.idWord)!;
+      findWord.disconnectTranslate = [...findWord.disconnectTranslate, {id: dataDelete.key}];
+      cache.current[dataDelete.idWord] = findWord;
+      setNoDataWords(newDataWords);
     }
   };
-  const handleSave = (row: any) => {
-    const newData = [...noDataWords];
-    let index = -1;
-    if (row.dataIndex === 'ru') {
-      index = newData.findIndex(item => item.children.some(t => t.key === row.key))
-    } else {
-      index = newData.findIndex(item => row.key === item.key);
-    }
-    if (index === -1) return;
-    const item = newData[index];
-    if (row.dataIndex === 'ru') {
-      const indexChild = item.children.findIndex(item => row.key === item.key);
-      item.children.splice(indexChild, 1, {...item.children, ...row});
-    } else {
-      newData.splice(index, 1, {...item, ...row});
-    }
-    setNoDataWords(newData);
+  const handleSave = (row: IDataColumn & IDataChildColumn) => {
+    setNoDataWords(words => {
+      const indexWord = words.findIndex(w => w.id === (row.idWord || row.key))!;
+      if (row.dataIndex === 'en') {
+        words[indexWord].en = row.en;
+      } else {
+        const indexRu = words[indexWord].translate.findIndex(t => t.id === row.key)!;
+        words[indexWord].translate[indexRu].ru = row.ru;
+      }
+      cache.current[row.idWord || row.key] = words[indexWord];
+      return [...words];
+    })
+  };
+
+  const handleChangeType = (type: PartOfSpeech, id: number, idWord: number) => {
+    setNoDataWords(words => {
+      const indexWord = words.findIndex(w => w.id === (idWord || id))!;
+      if (!idWord) {
+        words[indexWord].type = type;
+      } else {
+        const indexRu = words[indexWord].translate.findIndex(t => t.id === id)!;
+        words[indexWord].translate[indexRu].type = type;
+      }
+      cache.current[idWord || id] = words[indexWord];
+      return [...words];
+    })
   };
 
   const handleAdd = async (values: ICreateWord) => {
-    if(isAdd) {
+    const res = await mutationCreateWord({
+      variables: {
+        entityId: entity.id,
+        type: values.type,
+        en: values.en,
+        translate: values.translate
+      }
+    });
+    const data: IWord = res.data.createOrUpdateWordWithTranslate;
+    setNoDataWords(words => {
+      return [...words, data]
+    })
+  };
 
-    }
-    else {
-      await mutationCreateWord({
-        variables: {
-          entityId: entity.id,
-          type: values.type,
-          en: values.en,
-          translate: values.translate
-        },
-        awaitRefetchQueries: true,
-        refetchQueries: [{
-          query: QUERIES.GET_ENTITIES_BY_WORD,
-          variables: {
-            word: values.en
-          }
-        }]
-      })
+  const handleAddTranslate = (idWord: number, data: ITranslate) => {
+    const findIndex = noDataWords.findIndex(w => w.id === idWord);
+    const index = noDataWords[findIndex].translate.findIndex(t => t.id === data.id);
+    if (index === -1) {
+      noDataWords[findIndex].translate.push(data);
+      setNoDataWords([...noDataWords]);
     }
   };
 
+  const handleUpdate = () => {
+    mutationUpdate({
+      variables: {
+        data: {
+          entityId: entity.id,
+          words: Object.values(cache.current).map(w => ({
+            type: w.type,
+            id: w.id,
+            disconnectTranslate: w.disconnectTranslate.map(d => d.id),
+            translate: w.translate.map(t => ({
+              id: t.id,
+              type: t.type,
+              ru: t.ru
+            }))
+          })),
+          disconnectWords: disconnectWords.map(d => d.id),
+        }
+      }
+    }).then(res => {
+      cache.current = {};
+    });
+  };
+
   return (
-    <Form
-      name="basic"
-      initialValues={{remember: true}}
-    >
-      <Table
-        bordered={false}
-        showHeader={false}
-        components={components}
-        dataSource={truthDataWords}
-        pagination={false}
-        size={'small'}
-        rowClassName={() => 'editable-row'}
-        title={() => <TitleTable idEntity={entity.id!} onAdd={handleAdd}/>}
-      >
-        <Column
-          title="EN"
-          dataIndex="en"
-          key="en"
-          width="25%"
-          onCell={(record) => ({
-            record,
-            editable: true,
-            dataIndex: 'en',
-            title: 'EN',
-            handleSave: handleSave,
-          })}
-        />
-        <Column
-          title="RU"
-          dataIndex="ru"
-          key="ru"
-          width="40%"
-          onCell={(record) => ({
-            record,
-            editable: true,
-            dataIndex: 'ru',
-            title: 'RU',
-            handleSave: handleSave,
-          })}
-        />
-        <Column
-          title="Part of speech"
-          dataIndex="type"
-          key="type"
-          width="20%"
-          render={(type: PartOfSpeech) => {
-            return <SelectPartOfSpeech defaultValue={type} />
-          }}/>
-        <Column
-          title="Operation"
-          dataIndex="operation"
-          render={(text: any, record: any) => {
-            if (record.count && record.count === 1) {
-              return null;
+    <Row>
+      <Col span={24}>
+        <Table
+          bordered={false}
+          showHeader={false}
+          components={components}
+          dataSource={truthDataWords}
+          pagination={false}
+          size={'small'}
+          rowClassName={() => 'editable-row'}
+          title={() => <TitleTable onAdd={handleAdd} onUpdate={handleUpdate} loadingUpdate={loadingUpdate}
+                                   disabled={isEmptyObject(cache.current)}/>}
+        >
+          <Column
+            title="EN"
+            dataIndex="en"
+            key="en"
+            width="40%"
+            onCell={(record) => ({
+              record,
+              dataIndex: 'en',
+              title: 'EN',
+              handleSave: handleSave,
+            })}
+          />
+          <Column
+            title="RU"
+            dataIndex="ru"
+            key="ru"
+            width="45%"
+            onCell={(record) => ({
+              record,
+              editable: true,
+              dataIndex: 'ru',
+              title: 'RU',
+              handleSave: handleSave,
+            })}
+          />
+          <Column
+            title="Part of speech"
+            dataIndex="type"
+            key="type"
+            width="15%"
+            render={(type: PartOfSpeech, record: IDataColumn & IDataChildColumn) => {
+              return <SelectPartOfSpeech value={type}
+                                         onChange={type => handleChangeType(type, record.key, record.idWord)}/>
+            }}/>
+          <Column
+            title="Operation"
+            dataIndex="operation"
+            render={(text: any, record: IDataColumn & IDataChildColumn) => {
+              if (record.count && record.count === 1) {
+                return null;
+              }
+              return (
+                <Row align="middle">
+                  {!record.idWord && (
+                    <Col span={7}>
+                      <AddTranslate idWord={record.key} onAdd={handleAddTranslate}/>
+                    </Col>
+                  )
+                  }
+                  <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete({...record})}>
+                    <Tooltip title="Delete">
+                      <Button danger size="small" shape="circle" icon={<DeleteOutlined/>}/>
+                    </Tooltip>
+                  </Popconfirm>
+                </Row>
+              )
             }
-            return (
-              <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete({...record})}>
-                <a>Delete</a>
-              </Popconfirm>
-            )
-          }
-          }
-        />
-      </Table>
-      <Form.Item>
-        <Button type="primary" htmlType="submit">
-          {isAdd ? 'Create' : 'Update'}
-        </Button>
-      </Form.Item>
-    </Form>
+            }
+          />
+        </Table>
+      </Col>
+    </Row>
   )
 };
 

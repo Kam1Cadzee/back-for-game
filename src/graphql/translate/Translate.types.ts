@@ -5,22 +5,25 @@ import {PhraseCreateInput, PhraseUpdateInput, SentenceCreateInput} from '../../t
 
 @InputType()
 export class TranslateWordWithParseInput {
-  @Field(returns => String)
-  title: string;
+  @Field()
+  entityId: number;
 
   @Field(returns => [OtherWordInput])
   words: OtherWordInput[];
 
-  @Field(returns => [PhraseCreateInput])
+  /*@Field(returns => [PhraseCreateInput])
   phrases: PhraseCreateInput[];
 
   @Field(returns => [SentenceCreateInput])
-  sentences: SentenceCreateInput[];
+  sentences: SentenceCreateInput[];*/
 
-  @Field({
+ /* @Field({
     nullable: true
   })
-  irrverbId: number | null;
+  irrverbId: number | null;*/
+
+  @Field(returns => [Number])
+  disconnectWords: number[];
 }
 
 @ObjectType()
@@ -45,6 +48,9 @@ export class TranslateWordWithParseReturn {
     defaultValue: null
   })
   irrverb: Irrverb | null;
+
+  @Field(returns => [String])
+  disconnectWords: string[];
 }
 
 @ObjectType()
@@ -56,19 +62,28 @@ export class OtherWord {
   en: string;
 
   @Field(returns => [Translation])
-  translate: Translation[]
+  translate: Translation[];
+
+  @Field(returns => [String])
+  disconnectTranslate: string[];
 }
 
 @InputType()
 class OtherWordInput {
+  @Field()
+  id: number;
+
   @Field(returns => PartOfSpeech)
   type: PartOfSpeech;
 
-  @Field()
-  en: string;
+ /* @Field()
+  en: string;*/
 
   @Field(returns => [TranslationInput])
-  translate: TranslationInput[]
+  translate: TranslationInput[];
+
+  @Field(returns => [Number])
+  disconnectTranslate: number[];
 }
 
 @ObjectType()
@@ -82,6 +97,9 @@ export class Translation {
 
 @InputType()
 export class TranslationInput {
+  @Field()
+  id: number;
+
   @Field(returns => PartOfSpeech)
   type: PartOfSpeech;
 

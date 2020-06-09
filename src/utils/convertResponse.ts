@@ -46,7 +46,8 @@ class ConvertResponse {
         result.words.push({
           type,
           translate: ConvertResponse.getArray(exp.translation).map(t => ({ru: t, type})),
-          en: exp.word
+          en: exp.word,
+          disconnectTranslate: []
         })
       }
       else {
@@ -74,7 +75,8 @@ class ConvertResponse {
         result.words.push({
           type,
           translate: ConvertResponse.getArray(exp.lingvoTranslations).map(t => ({ru: t, type})),
-          en: exp.heading
+          en: exp.heading,
+          disconnectTranslate: []
         })
       }
       else {

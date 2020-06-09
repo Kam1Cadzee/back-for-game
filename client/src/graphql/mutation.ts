@@ -35,7 +35,48 @@ export const MUTATION = {
   createOrUpdateWordWithTranslate: gql`
       mutation createOrUpdateWordWithTranslate($entityId: Float!,$type: PartOfSpeech!, $en: String!, $translate: [String!]!) {
           createOrUpdateWordWithTranslate(entityId: $entityId, type: $type, en: $en, translate: $translate) {
-              id
+              id,
+              en,
+              type,
+              disconnectTranslate {
+                  id
+              },
+              translate {
+                  id,
+                  ru,
+                  type
+              }
+          }
+      }
+  `,
+  updateAllEntity: gql`
+      mutation updateAllEntity($data: TranslateWordWithParseInput!) {
+          updateAllEntity(data: $data)
+      }
+  `,
+  upsertTranslate: gql`
+      mutation upsertTranslate($idWord: Int!, $ru: String!) {
+          upsertTranslate(where: {
+              ru: $ru
+          }, create: {
+              ru: $ru,
+              type: OTHER,
+              words: {
+                  connect: {
+                      id: $idWord
+                  }
+              }
+          },
+              update: {
+                  words: {
+                      connect: {
+                          id: $idWord
+                      }
+                  }
+              }) {
+              id,
+              ru,
+              type,
           }
       }
   `

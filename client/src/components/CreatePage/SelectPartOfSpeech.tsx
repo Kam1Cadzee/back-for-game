@@ -12,7 +12,7 @@ function tagRender(props: any) {
 
   return <TagPartOfSpeech type={label}/>;
 }
-const SelectPartOfSpeech = (props: SelectProps<any>) => {
+const SelectPartOfSpeech = (props: SelectProps<PartOfSpeech>) => {
   const parts = usePartOfSpeech();
 
   return (

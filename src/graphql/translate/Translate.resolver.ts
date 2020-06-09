@@ -29,9 +29,9 @@ export class TranslateResolver {
     return await this.service.translateWordWithParse(word);
   }
 
-  @Mutation(returns => Number)
-  async createFullEntity(@Ctx() ctx: Context, @Arg('data') data: TranslateWordWithParseInput) {
-    return await this.service.createFullEntity(data, ctx);
+  @Mutation(returns => Boolean)
+  async updateAllEntity(@Ctx() ctx: Context, @Arg('data') data: TranslateWordWithParseInput) {
+    return await this.service.updateAllEntity(data);
   }
 
   @Mutation(returns => TranslateReturn)
