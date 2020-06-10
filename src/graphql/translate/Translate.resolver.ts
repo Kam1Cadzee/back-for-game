@@ -3,14 +3,13 @@ import {Context} from '../../context';
 import {TranslateService} from './Translate.service';
 import {
   CreateOrUpdateWordWithTranslateArgs,
-  CreateTranslateInput,
+  CreateTranslateInput, PhraseCustom,
   TranslateReturn,
   TranslateWordReturn,
   TranslateWordWithParseInput,
-  TranslateWordWithParseReturn,
+  TranslateWordWithParseReturn, UpdatePhrasesInput,
 } from './Translate.types';
-import {Entity, Word} from '../../type-graphql/models';
-import {PartOfSpeech} from '../../type-graphql/enums';
+import {Entity, Phrase, Word} from '../../type-graphql/models';
 
 @Resolver()
 export class TranslateResolver {
@@ -24,14 +23,19 @@ export class TranslateResolver {
     return await this.service.translateWord(word, ctx.userId);
   }
 
+  @Mutation(returns => PhraseCustom)
+  async translatePhrase(@Arg('phrase') phrase: string) {
+    return await this.service.translatePhrase(phrase);
+  }
+
   @Query(returns => TranslateWordWithParseReturn)
   async translateWordWithParse(@Arg('word') word: string) {
     return await this.service.translateWordWithParse(word);
   }
 
   @Mutation(returns => Boolean)
-  async updateAllEntity(@Ctx() ctx: Context, @Arg('data') data: TranslateWordWithParseInput) {
-    return await this.service.updateAllEntity(data);
+  async updateWordsByEntity(@Ctx() ctx: Context, @Arg('data') data: TranslateWordWithParseInput) {
+    return await this.service.updateWordsByEntity(data);
   }
 
   @Mutation(returns => TranslateReturn)
@@ -48,7 +52,11 @@ export class TranslateResolver {
   async createOrUpdateWordWithTranslate(@Ctx() ctx: Context,
                                        @Args(returns => CreateOrUpdateWordWithTranslateArgs) data: CreateOrUpdateWordWithTranslateArgs,
   ) {
-    console.log(data)
     return this.service.createOrUpdateWordWithTranslate(data.entityId, data.type, data.en, ctx.userId, data.translate);
+  }
+
+  @Mutation(returns => Boolean)
+  async updatePhraseByEntity(@Arg('data') data: UpdatePhrasesInput) {
+    return this.service.updatePhraseByEntity(data);
   }
 }

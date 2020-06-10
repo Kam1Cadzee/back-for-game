@@ -33,6 +33,7 @@ const startServer = async () => {
   });
   const middleware = applyMiddleware(await bootstrap(), permissions);
   const resultABBYY = await serviceABBYY.auth();
+
   if(resultABBYY !== true) {
     console.log(`Service ABBYY doesn't work, is crash on auth method`);
   }

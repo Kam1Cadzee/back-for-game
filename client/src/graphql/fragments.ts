@@ -43,8 +43,14 @@ const FRAGMENTS = {
     },
     disconnectWords {
       id
+    },
+    disconnectPhrases {
+      id
+    },
+    disconnectSentences {
+      id
     }
-  `
+  `,
 };
 
 export default FRAGMENTS;

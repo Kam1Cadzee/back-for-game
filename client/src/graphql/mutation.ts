@@ -49,9 +49,9 @@ export const MUTATION = {
           }
       }
   `,
-  updateAllEntity: gql`
-      mutation updateAllEntity($data: TranslateWordWithParseInput!) {
-          updateAllEntity(data: $data)
+  updateWordsByEntity: gql`
+      mutation updateWordsByEntity($data: TranslateWordWithParseInput!) {
+          updateWordsByEntity(data: $data)
       }
   `,
   upsertTranslate: gql`
@@ -78,6 +78,44 @@ export const MUTATION = {
               ru,
               type,
           }
+      }
+  `,
+  translatePhrase: gql`
+      mutation translatePhrase($phrase: String!) {
+          translatePhrase(phrase: $phrase) {
+              phrase,
+              ru
+          }
+      }
+  `,
+  upsertPhrase: gql`
+      mutation upsertPhrase($phrase: String!, $ru: String!, $entityId: Int!) {
+          upsertPhrase(where: {
+              phrase: $phrase
+          }, create: {
+              phrase: $phrase,
+              ru: $ru,
+              entities: {
+                  connect: {
+                      id: $entityId
+                  }
+              }
+          }, update: {
+              entities: {
+                  connect: {
+                      id: $entityId
+                  }
+              }
+          }) {
+              id,
+              phrase,
+              ru
+          }
+      }
+  `,
+  updatePhraseByEntity: gql`
+      mutation updatePhraseByEntity($data: UpdatePhrasesInput!) {
+          updatePhraseByEntity(data: $data)
       }
   `
 };

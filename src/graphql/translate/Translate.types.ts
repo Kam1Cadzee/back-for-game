@@ -1,7 +1,6 @@
 import {Arg, Args, ArgsType, Field, InputType, ObjectType} from 'type-graphql';
 import {PartOfSpeech} from '../../type-graphql/enums';
 import {Irrverb} from '../../type-graphql/models';
-import {PhraseCreateInput, PhraseUpdateInput, SentenceCreateInput} from '../../type-graphql/resolvers/inputs';
 
 @InputType()
 export class TranslateWordWithParseInput {
@@ -11,19 +10,20 @@ export class TranslateWordWithParseInput {
   @Field(returns => [OtherWordInput])
   words: OtherWordInput[];
 
-  /*@Field(returns => [PhraseCreateInput])
-  phrases: PhraseCreateInput[];
-
-  @Field(returns => [SentenceCreateInput])
-  sentences: SentenceCreateInput[];*/
-
- /* @Field({
-    nullable: true
-  })
-  irrverbId: number | null;*/
-
   @Field(returns => [Number])
   disconnectWords: number[];
+}
+
+@InputType()
+export class UpdatePhrasesInput {
+  @Field()
+  entityId: number;
+
+  @Field(returns => [PhraseCustomInput])
+  phrases: PhraseCustomInput[];
+
+  @Field(returns => [Number])
+  disconnectPhrases: number[];
 }
 
 @ObjectType()
@@ -110,6 +110,18 @@ export class TranslationInput {
 
 @ObjectType()
 export class PhraseCustom {
+  @Field()
+  phrase: string;
+
+  @Field()
+  ru: string;
+}
+
+@InputType()
+export class PhraseCustomInput {
+  @Field()
+  id: number;
+
   @Field()
   phrase: string;
 
