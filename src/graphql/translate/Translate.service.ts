@@ -369,7 +369,7 @@ export class TranslateService {
     const result = await this.getEntityByUserId(word, config.superUser);//todo
     if (result === null) return null;
 
-    const entities = await Promise.all(result.entities.map(async entity => {
+    const entities: any = await Promise.all(result.entities.map(async (entity: any) => {
       return this.utilCreateEntity(entity, userId, isNeededEdit);
     }));
     return entities;
