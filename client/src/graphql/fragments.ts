@@ -18,6 +18,7 @@ const FRAGMENTS = {
       ru
     },
     isNeededEdit,
+    isCreate,
     words {
       id,
       en,

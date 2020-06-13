@@ -21,11 +21,7 @@ const LoginForm = () => {
         }
       });
       localStorage.setItem('token', mutationResult.data.login.token);
-    },
-    onError: error => {
-      console.log({error})
-    },
-    errorPolicy: 'none',
+    }
   });
 
   const onFinish = async (values: any) => {

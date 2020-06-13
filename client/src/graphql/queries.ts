@@ -71,14 +71,7 @@ const QUERIES = {
   `,
   GET_ENTITIES: gql`
       query getEntities($id: Int) {
-          entities(where: {userId: {equals: $id}}) {
-              ${FRAGMENTS.entity}
-          }
-      }
-  `,
-  GET_ENTITIES_BY_WORD: gql`
-      query getEntitiesByWord($word: String!) {
-          getEntitiesByWord(word: $word) {
+          entities(where: {userId: {equals: $id}, isCreate: {equals: true}}) {
               ${FRAGMENTS.entity}
           }
       }
@@ -90,37 +83,6 @@ const QUERIES = {
           }
       }
   `,
-  TRANSLATE_WORD_WITH_PARSE: gql`
-      query translateWordWithParse($word: String!) {
-          translateWordWithParse(word: $word) {
-              title,
-              words {
-                  type,
-                  en,
-                  translate {
-                      type,
-                      ru
-                  }
-              },
-              phrases{
-                  phrase,
-                  ru
-              },
-              backTranslations,
-              irrverb {
-                  form1EN,
-                  form2EN,
-                  form3EN,
-                  id,
-                  ru
-              },
-              sentences {
-                  sentence,
-                  ru
-              }
-          }
-      }
-  `,
   GET_PART_OF_SPEECH: gql`
       query PartOfSpeech {
           partOfSpeechDescs {
@@ -129,17 +91,6 @@ const QUERIES = {
               ru,
               ua,
               en
-          }
-      }
-  `,
-  TRANSLATE_WORD: gql`
-      query translateWord($word: String!) {
-          translateWord(word: $word) {
-              type,
-              translate {
-                  type,
-                  ru
-              }
           }
       }
   `,

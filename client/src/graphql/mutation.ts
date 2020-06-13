@@ -1,4 +1,5 @@
 import {gql} from 'apollo-boost';
+import FRAGMENTS from './fragments';
 
 export const MUTATION = {
   deleteWord: gql`
@@ -81,8 +82,8 @@ export const MUTATION = {
       }
   `,
   translatePhrase: gql`
-      mutation translatePhrase($phrase: String!) {
-          translatePhrase(phrase: $phrase) {
+      mutation translatePhrase($phrase: String!, $entity: String!) {
+          translatePhrase(phrase: $phrase, entity: $entity) {
               phrase,
               ru
           }
@@ -117,5 +118,24 @@ export const MUTATION = {
       mutation updatePhraseByEntity($data: UpdatePhrasesInput!) {
           updatePhraseByEntity(data: $data)
       }
-  `
+  `,
+  GET_ENTITIES_BY_WORD: gql`
+      mutation getEntitiesByWord($word: String!) {
+          getEntitiesByWord(word: $word) {
+              ${FRAGMENTS.entity}
+          }
+      }
+  `,
+
+  TRANSLATE_WORD: gql`
+      mutation translateWord($word: String!, $entity: String!) {
+          translateWord(word: $word, entity: $entity) {
+              type,
+              translate {
+                  type,
+                  ru
+              }
+          }
+      }
+  `,
 };

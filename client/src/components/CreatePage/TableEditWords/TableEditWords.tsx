@@ -18,6 +18,8 @@ interface ITableEditWordsProps {
   words: IWord[];
   disconnectWords: IDeleteSmth[];
   entityId: number;
+  title: string;
+  isCreate: boolean;
 }
 
 interface ICreateWord {
@@ -85,6 +87,7 @@ const TableEditWords = (props: ITableEditWordsProps) => {
   );
   const cache = useRef({} as ICache);
   const history = useRef(new RedoHistory());
+  const [isCreate, setIsCreate] = useState(props.isCreate);
   const [isShowDeleted, setShowDeleted] = useState(false);
   const [noDataWords, setNoDataWords] = useState(props.words);
   const [disconnectWords, setDisconnectWords] = useState(props.disconnectWords);
@@ -231,6 +234,7 @@ const TableEditWords = (props: ITableEditWordsProps) => {
       },
     }).then((res) => {
       cache.current = {};
+      setIsCreate(true);
     });
   };
 
@@ -275,13 +279,15 @@ const TableEditWords = (props: ITableEditWordsProps) => {
           onAdd={handleAdd}
           onUpdate={handleUpdate}
           loadingUpdate={loadingUpdate}
-          disabled={isEmptyObject(cache.current)}
+          disabled={isCreate ? isEmptyObject(cache.current) : false}
           isShowDeleted={isShowDeleted}
           checkedDeleted={setShowDeleted}
           disabledPrev={!history.current.isPrev()}
           disabledNext={!history.current.isNext()}
           onPrev={history.current.prev}
           onNext={history.current.next}
+          entity={props.title}
+          isCreate={isCreate}
         />
       )}
     >

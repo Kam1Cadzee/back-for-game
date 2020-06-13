@@ -18,14 +18,14 @@ export class TranslateResolver {
   ) {
   }
 
-  @Query(returns => TranslateWordReturn)
-  async translateWord(@Ctx() ctx: Context, @Arg('word') word: string) {
-    return await this.service.translateWord(word, ctx.userId);
+  @Mutation(returns => TranslateWordReturn)
+  async translateWord(@Ctx() ctx: Context, @Arg('word') word: string, @Arg('entity') entity: string) {
+    return await this.service.translateWord(word,entity, ctx.userId, ctx);
   }
 
   @Mutation(returns => PhraseCustom)
-  async translatePhrase(@Arg('phrase') phrase: string) {
-    return await this.service.translatePhrase(phrase);
+  async translatePhrase(@Ctx() ctx: Context, @Arg('phrase') phrase: string, @Arg('entity') entity: string) {
+    return await this.service.translatePhrase(phrase, entity, ctx);
   }
 
   @Mutation(returns => Boolean)
@@ -38,7 +38,7 @@ export class TranslateResolver {
     return this.service.createOrUpdateTranslate(data.idWord, data.translation);
   }
 
-  @Query(returns => [Entity], {
+  @Mutation(returns => [Entity], {
     nullable: 'items'
   })
   async getEntitiesByWord(@Ctx() ctx: Context, @Arg('word') word: string) {

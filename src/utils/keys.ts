@@ -22,11 +22,9 @@ export const generateKey = (name: 'abbyy' | 'azure') => {
       if(currentIndex === countKeys) {
         currentIndex = 0;
       }
-      console.log('next key = ' + currentIndex);
       return config[`${name}_keys`][currentIndex];
     },
     clear: () => {
-      console.log('clear\n\n\n');
       iterable = 0;
     }
   }

@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {Button, Form, Input, Popover, Row, Select, Switch} from 'antd';
-import { PlusOutlined, CloseOutlined, CheckOutlined, LeftSquareOutlined, RightSquareOutlined } from '@ant-design/icons';
+import {CheckOutlined, CloseOutlined, RightOutlined, PlusOutlined, LeftOutlined} from '@ant-design/icons';
 import SelectPartOfSpeech from './SelectPartOfSpeech';
-import { PartOfSpeech } from '../../../typings/PartOfSpeech';
-import { useQuery } from '@apollo/react-hooks';
-import QUERIES from '../../../graphql/queries';
+import {PartOfSpeech} from '../../../typings/PartOfSpeech';
+import {useMutation} from '@apollo/react-hooks';
+import {MUTATION} from '../../../graphql/mutation';
 
-const { Search } = Input;
-const { Option } = Select;
-const { Group } = Button;
+const {Search} = Input;
+const {Option} = Select;
+const {Group} = Button;
 
 interface ITitleTableProps {
   onAdd: any;
@@ -21,18 +21,19 @@ interface ITitleTableProps {
   onNext: any;
   disabledPrev: boolean;
   disabledNext: boolean;
+  entity: string;
+  isCreate: boolean;
 }
 
 interface IContentTitleTableProps {
   onAdd: any;
   onClose: any;
+  entity: string;
 }
 
-const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
+const ContentTitleTable = ({onClose, onAdd, entity}: IContentTitleTableProps) => {
   const [options, setOptions] = useState([]);
-  const { refetch } = useQuery(QUERIES.TRANSLATE_WORD, {
-    skip: true,
-  });
+  const [mutationTranslateWord] = useMutation(MUTATION.TRANSLATE_WORD);
   const [form] = Form.useForm();
 
   const onFinish = async (values: any) => {
@@ -41,16 +42,20 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
   };
 
   const handleChange = (value: PartOfSpeech) => {
-    form.setFieldsValue({ type: value });
+    form.setFieldsValue({type: value});
   };
 
   const handleSearch = async (value: string, event: any) => {
     event.preventDefault();
     if (value === '') return;
-    const res = await refetch({
-      word: value,
+    const res = await mutationTranslateWord({
+      variables: {
+        word: value,
+        entity
+      }
     });
 
+    if(res.data === null) return ;
     const translateWord: any = res.data.translateWord;
     setOptions(translateWord.translate.map((t: any) => t.ru));
     form.setFieldsValue({
@@ -63,13 +68,13 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
     <Form name="basic" onFinish={onFinish} form={form}>
       <Form.Item
         name="en"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        rules={[{required: true, message: 'Please input your username!'}]}
       >
-        <Search onSearch={handleSearch} placeholder="Word" enterButton />
+        <Search onSearch={handleSearch} placeholder="Word" enterButton/>
       </Form.Item>
       <Form.Item
         name="translate"
-        rules={[{ required: true, message: 'Please input your username!' }]}
+        rules={[{required: true, message: 'Please input your username!'}]}
       >
         <Select mode="tags" tokenSeparators={[',']}>
           {options.map((o) => {
@@ -80,10 +85,10 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
       <Input.Group compact size="small">
         <Form.Item
           name="type"
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          rules={[{required: true, message: 'Please input your username!'}]}
           initialValue={PartOfSpeech.OTHER}
         >
-          <SelectPartOfSpeech onChange={handleChange} />
+          <SelectPartOfSpeech onChange={handleChange}/>
         </Form.Item>
         <Form.Item>
           <Button
@@ -91,7 +96,7 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
             type="primary"
             htmlType="submit"
             shape="circle"
-            icon={<PlusOutlined />}
+            icon={<PlusOutlined/>}
           />
         </Form.Item>
       </Input.Group>
@@ -100,17 +105,19 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
 };
 
 const TitleTableWords = ({
-  onAdd,
-  onUpdate,
-  loadingUpdate,
-  disabled,
-  isShowDeleted,
-  checkedDeleted,
-  onPrev,
-  onNext,
-  disabledNext,
-  disabledPrev
-}: ITitleTableProps) => {
+                           onAdd,
+                           onUpdate,
+                           loadingUpdate,
+                           disabled,
+                           isShowDeleted,
+                           checkedDeleted,
+                           onPrev,
+                           onNext,
+                           disabledNext,
+                           disabledPrev,
+                           entity,
+                           isCreate
+                         }: ITitleTableProps) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleOk = () => {
@@ -125,21 +132,23 @@ const TitleTableWords = ({
       <div>
         <Button
           size="small"
-          shape="circle-outline"
+          shape="circle"
+          type="primary"
           onClick={onPrev}
           disabled={disabledPrev}
-          icon={<LeftSquareOutlined />}
+          icon={<LeftOutlined />}
         />
         <Button
           size="small"
-          shape="circle-outline"
+          shape="circle"
+          type="primary"
           onClick={onNext}
           disabled={disabledNext}
-          icon={<RightSquareOutlined />}
+          icon={<RightOutlined />}
         />
         <Switch
-          checkedChildren={<CheckOutlined />}
-          unCheckedChildren={<CloseOutlined />}
+          checkedChildren={<CheckOutlined/>}
+          unCheckedChildren={<CloseOutlined/>}
           checked={isShowDeleted}
           onChange={checked => checkedDeleted(checked)}
         />
@@ -152,10 +161,10 @@ const TitleTableWords = ({
           disabled={disabled || loadingUpdate}
           loading={loadingUpdate}
         >
-          Update
+          {isCreate ? 'Update' : 'Create'}
         </Button>
         <Popover
-          content={<ContentTitleTable onClose={handleOk} onAdd={onAdd} />}
+          content={<ContentTitleTable onClose={handleOk} onAdd={onAdd} entity={entity}/>}
           trigger="click"
           visible={isShow}
           onVisibleChange={handleVisibleChange}

@@ -11,6 +11,7 @@ import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
 import serviceABBYY from './service/abbyyService';
+import * as path from 'path';
 
 const startServer = async () => {
   await configTypeGraph({
@@ -60,6 +61,10 @@ const startServer = async () => {
 
   app.use(cors());
   app.use(express.json());
+  app.use(express.static('client/build'));
+  app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client/build/index.html'))
+  });
 
   server.applyMiddleware({app, path: '/graphql'});
 

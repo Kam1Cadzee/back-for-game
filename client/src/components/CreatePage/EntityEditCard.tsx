@@ -16,6 +16,8 @@ const EntityEditCard = ({ entity }: IEntityEditCardProps) => {
           words={entity.words}
           disconnectWords={entity.disconnectWords}
           entityId={entity.id}
+          title={entity.title}
+          isCreate={entity.isCreate}
         />
       </Col>
       <Col span={24}>
@@ -23,6 +25,8 @@ const EntityEditCard = ({ entity }: IEntityEditCardProps) => {
           phrases={entity.phrases}
           disconnectPhrases={entity.disconnectPhrases}
           entityId={entity.id}
+          title={entity.title}
+          isCreate={entity.isCreate}
         />
       </Col>
     </Row>

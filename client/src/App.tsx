@@ -1,16 +1,39 @@
 import React, {useEffect} from 'react';
+import { notification } from 'antd';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import LayoutPage from './pages/LayoutPage';
-import {ApolloProvider, useMutation,} from '@apollo/react-hooks';
+import {ApolloProvider, useMutation, useQuery,} from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import FRAGMENTS from './graphql/fragments';
 import QUERIES from './graphql/queries';
 import 'antd/dist/antd.css';
 import './App.css';
-import { ApolloLink } from '@apollo/client';
-import { ApolloClient } from 'apollo-client';
+import { ApolloLink, from } from '@apollo/client';
 import { HttpLink } from 'apollo-link-http';
+import { onError } from "@apollo/link-error";
+import {IErrorDev, IErrorProd} from './typings/IError';
+import { ApolloClient } from 'apollo-boost';
+import {isDevelopment} from './utils/env';
+
+console.log(process.env)
+const linkError = onError(({ graphQLErrors = [], networkError, operation, forward, response }) => {
+  console.log({ graphQLErrors, networkError, operation, forward, response });
+  console.log(process.env.NODE_ENV);
+  if(isDevelopment) {
+    graphQLErrors.map((e: IErrorDev | any) => {
+      notification.error({
+        message: e.message
+      })
+    })
+  }
+  else {
+    graphQLErrors.map((e: IErrorProd | any) => {
+      notification.error({
+        message: e.message
+      })
+    })
+  }
+});
 
 const authLink: any = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers }: any) => ({ headers: {
@@ -20,15 +43,27 @@ const authLink: any = new ApolloLink((operation, forward) => {
   return forward(operation);
 });
 const link = new HttpLink({
-  uri: 'http://localhost:3005/graphql',
+  uri: isDevelopment ? 'http://localhost:3005/graphql' : 'https://englishnew.herokuapp.com/grpahql',
 });
 
-const cache = new InMemoryCache();
+const cache: any = new InMemoryCache();
 
 const client = new ApolloClient({
-  cache,
-  link: authLink.concat(link),
+  cache: cache,
+  link: from([
+    authLink,
+    linkError,
+    link,
+  ]) as any,
   connectToDevTools: true,
+  defaultOptions: {
+    mutate: {
+      errorPolicy: 'ignore'
+    },
+    query: {
+      errorPolicy: 'ignore'
+    }
+  }
 });
 
 cache.writeData({
@@ -41,7 +76,6 @@ function App() {
   const Content = () => {
     const [refresh] = useMutation(QUERIES.REFRESH_USER, {
       update: (proxy, mutationResult) => {
-        console.log(mutationResult)
         proxy.writeData({
           data: {
             isAuth: true,
@@ -49,7 +83,6 @@ function App() {
           }
         });
       },
-      onError: error => {}
     });
 
     useEffect(() => {
@@ -67,7 +100,7 @@ function App() {
   };
 
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={client as any}>
       <BrowserRouter>
       <Content/>
       </BrowserRouter>

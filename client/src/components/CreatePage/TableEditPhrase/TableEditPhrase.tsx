@@ -14,6 +14,8 @@ interface ITableEditPhraseProps {
   phrases: IPhrase[];
   disconnectPhrases: IDeleteSmth[];
   entityId: number;
+  title: string;
+  isCreate: boolean;
 }
 
 interface ICache {
@@ -25,6 +27,7 @@ const TableEditPhrase = (props: ITableEditPhraseProps) => {
   const [mutationUpdate, {loading}] = useMutation(MUTATION.updatePhraseByEntity);
   const [phrases, setPhrases] = useState(props.phrases);
   const [deletePhrases, setDeletePhrases] = useState(props.disconnectPhrases);
+  const [isCreate, setIsCreate] = useState(props.isCreate);
   const cache = useRef({} as ICache);
 
   const components = {
@@ -61,7 +64,10 @@ const TableEditPhrase = (props: ITableEditPhraseProps) => {
           }))
         }
       }
-    });
+    }).then(() => {
+      cache.current = {};
+      setIsCreate(true);
+    })
   };
 
   const handleAdd = async (value: IPhrase) => {
@@ -93,7 +99,9 @@ const TableEditPhrase = (props: ITableEditPhraseProps) => {
           onAdd={handleAdd}
           onUpdate={handleUpdate}
           loadingUpdate={loading}
-          disabled={isEmptyObject(cache.current)}
+          disabled={isCreate ? isEmptyObject(cache.current) : false}
+          entity={props.title}
+          isCreate={isCreate}
         />
       )}
     >
@@ -127,8 +135,6 @@ const TableEditPhrase = (props: ITableEditPhraseProps) => {
         title="Operation"
         dataIndex="operation"
         render={(text: any, record: any) => {
-          console.log(text);
-          console.log(record);
           return (
             <Popconfirm
               title="Sure to delete?"

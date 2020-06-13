@@ -15,7 +15,7 @@ const AuthPage = () => {
           <TabPane tab="Login" key="1">
             <LoginForm/>
           </TabPane>
-          <TabPane tab="Sign up" key="2">
+          <TabPane tab="Sign up" key="2" disabled >
             <SignUpForm/>
           </TabPane>
         </Tabs>

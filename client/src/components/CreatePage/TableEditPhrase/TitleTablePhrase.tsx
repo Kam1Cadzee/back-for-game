@@ -13,14 +13,17 @@ interface ITitleTableProps {
   onUpdate: any;
   loadingUpdate: boolean;
   disabled: boolean;
+  entity: string;
+  isCreate: boolean;
 }
 
 interface IContentTitleTableProps {
   onAdd: any;
   onClose: any;
+  entity: string;
 }
 
-const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
+const ContentTitleTable = ({ onClose, onAdd, entity }: IContentTitleTableProps) => {
   const [mutationTranslate, {loading}] = useMutation(MUTATION.translatePhrase);
   const [form] = Form.useForm();
 
@@ -33,9 +36,11 @@ const ContentTitleTable = ({ onClose, onAdd }: IContentTitleTableProps) => {
     event.preventDefault();
     const res = await mutationTranslate({
       variables: {
-        phrase: value
+        phrase: value,
+        entity
       }
     });
+    if(res.data === null) return;
     const phrase: IPhrase = res.data.translatePhrase;
     form.setFieldsValue({
       ru: phrase.ru
@@ -69,6 +74,8 @@ const TitleTablePhrase = ({
   onUpdate,
   onAdd,
   loadingUpdate,
+  entity,
+  isCreate
 }: ITitleTableProps) => {
   const [isShow, setIsShow] = useState(false);
 
@@ -89,10 +96,10 @@ const TitleTablePhrase = ({
           disabled={disabled || loadingUpdate}
           loading={loadingUpdate}
         >
-          Update
+          {isCreate ? 'Update' : 'Create'}
         </Button>
         <Popover
-          content={<ContentTitleTable onClose={handleOk} onAdd={onAdd} />}
+          content={<ContentTitleTable onClose={handleOk} onAdd={onAdd} entity={entity} />}
           trigger="click"
           visible={isShow}
           onVisibleChange={handleVisibleChange}

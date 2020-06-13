@@ -36,6 +36,7 @@ export interface IEntity {
   sentences: ISentence[];
   phrases: IPhrase[];
   words: IWord[];
+  isCreate: boolean;
   backTranslations?: string[] | null;
   disconnectWords: IDeleteSmth[];
   disconnectSentences: IDeleteSmth[];

@@ -12,7 +12,7 @@ const withAuthRedirect = (Component: any) => {
 
     });
 
-    let redirect = '/main';
+    let redirect = '/main/words';
     if(props.location.state && props.location.state.from) {
       redirect = props.location.state.from;
     }

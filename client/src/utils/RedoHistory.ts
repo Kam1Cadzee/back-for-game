@@ -50,7 +50,6 @@ export class RedoHistory {
     }
     const revert = this.getRevertAction(this.current!.action);
     revert(this.current!.payload);
-    console.log(this.current!.action)
     this.current = this.current!.prevAction;
   }
 
@@ -59,7 +58,6 @@ export class RedoHistory {
       return;
     }
     this.current = this.current!.nextAction;
-    console.log(this.current!.action)
     const action = this.getAction(this.current!.action);
     action(this.current!.payload);
   }
@@ -70,14 +68,6 @@ export class RedoHistory {
 
   public isNext = () => {
     return this.current !== null ? this.current.nextAction !== null : false;
-  }
-
-  public test() {
-    let c = this.current;
-    while (c !== null) {
-      console.log(c.action);
-      c = c.prevAction;
-    }
   }
 }
 

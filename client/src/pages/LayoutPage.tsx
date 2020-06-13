@@ -30,7 +30,7 @@ const LayoutPage = (props: RouteComponentProps<any>) => {
   };
 
   const handleExit = async () => {
-    await client.clearStore();
+    await client.cache.reset();
     localStorage.removeItem('token');
     history.replace('/')
   };

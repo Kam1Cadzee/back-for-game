@@ -44,6 +44,7 @@ enum Role {
   ADMIN
   TEST
   STANDARD
+  SUPER
 }
 
 enum PartOfSpeech {

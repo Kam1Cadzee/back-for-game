@@ -21,9 +21,6 @@ const SignUpForm = () => {
         }
       });
       localStorage.setItem('token', mutationResult.data.login.token);
-    },
-    onError: error => {
-
     }
   });
   const onFinish = async (values: any) => {
