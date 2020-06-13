@@ -1,28 +1,57 @@
-import { Inject, Service } from 'typedi';
+import {Inject, Service} from 'typedi';
 import serviceABBYY from '../../service/abbyyService';
 import azureService from '../../service/azureService';
-import { ApolloError } from 'apollo-server-errors';
-import ConvertResponse, {
-  INormalizeWordList,
-} from '../../utils/convertResponse';
-import { PartOfSpeech } from '../../type-graphql/enums';
+import {ApolloError} from 'apollo-server-errors';
+import ConvertResponse, {INormalizeWordList,} from '../../utils/convertResponse';
 import {
   OtherWord,
   TranslateWordWithParseInput,
   TranslateWordWithParseReturn,
-  TranslationInput, UpdatePhrasesInput,
+  TranslationInput,
+  UpdatePhrasesInput,
 } from './Translate.types';
 import uniqby from 'lodash.uniqby';
 import detectPartOfSpeech from '../../utils/partOfSpeech';
-import { IAnotherWordList } from '../../typing/ABBYYTypes';
-import { PrismaClient } from '@prisma/client';
-import { Context } from '../../context';
+import {IAnotherWordList} from '../../typing/ABBYYTypes';
+import {PrismaClient} from '@prisma/client';
+import {Context} from '../../context';
+import {PartOfSpeech} from '../../type-graphql/enums';
+import {Entity} from '../../type-graphql/models';
+import config from '../../config';
+
+const includeEntity = {
+  disconnectWords: {
+    select: {
+      id: true
+    }
+  },
+  words: {
+    include: {
+      translate: true,
+      disconnectTranslate: true,
+    },
+  },
+  disconnectPhrases: {
+    select: {
+      id: true
+    }
+  },
+  disconnectSentences: {
+    select: {
+      id: true
+    }
+  },
+  sentences: true,
+  phrases: true,
+  irrverb: true,
+};
 
 @Service()
 export class TranslateService {
   constructor(
     @Inject('PRISMA_CONTEXT') private readonly prisma: PrismaClient,
-  ) {}
+  ) {
+  }
 
   async translatePhrase(phrase: string) {
     const res = await this.prisma.phrase.findOne({
@@ -33,7 +62,7 @@ export class TranslateService {
         ru: true
       }
     });
-    if(res) {
+    if (res) {
       return {
         ru: res.ru,
         phrase,
@@ -48,6 +77,7 @@ export class TranslateService {
       phrase,
     }
   }
+
   async translateWord(word: string, userId: number) {
     const res = await this.prisma.word.findOne({
       where: {
@@ -79,11 +109,13 @@ export class TranslateService {
     const type = await detectPartOfSpeech.getPartOfSpeech(word);
     return {
       type,
-      translate: [{ ru: result, type }],
+      translate: [{ru: result, type}],
     };
   }
 
-  async translateWordWithParse(word: string) {
+  async translateWordWithParse(word: string, userId: number) {
+    let count = 0;
+    console.log('BIG QUERY - translateWordWithParse');
     const response: TranslateWordWithParseReturn = {
       words: [],
       irrverb: null,
@@ -101,6 +133,7 @@ export class TranslateService {
     };
 
     const dictionary = await azureService.dictionary(word);
+    count += 1;
     if (dictionary) {
       const convert = ConvertResponse.convertDictionary(dictionary);
       response.backTranslations = convert.backTranslations;
@@ -108,6 +141,7 @@ export class TranslateService {
     }
 
     let wordList: IAnotherWordList[] | any = await serviceABBYY.wordList(word);
+    count += 1;
     let convertWordList: INormalizeWordList | null = null;
     if (wordList) {
       convertWordList = ConvertResponse.convertWordList(wordList);
@@ -126,6 +160,7 @@ export class TranslateService {
     }
 
     const miniCard = await serviceABBYY.miniCard(word);
+    count += 1;
     if (miniCard) {
       miniCard.split(',').forEach((mini) => {
         firstWord.translate.push({
@@ -136,6 +171,7 @@ export class TranslateService {
     }
 
     const azureTranslate = await azureService.translate(word);
+    count += 1;
     if (azureTranslate) {
       firstWord.translate.push({
         type: firstWord.type,
@@ -152,6 +188,21 @@ export class TranslateService {
     );
     response.irrverb = await this.getIfFindIrrWord(word);
 
+    this.prisma.user.findOne({
+      where: {
+        id: userId
+      }
+    })
+      .then(user => {
+        this.prisma.user.update({
+          where: {
+            id: userId
+          },
+          data: {
+            countQuery: user.countQuery + count
+          }
+        })
+      });
     return response;
   }
 
@@ -179,33 +230,23 @@ export class TranslateService {
   }
 
   async getEntitiesByWord(word: string, ctx: Context) {
-    console.log(1);
     try {
-      const result = await this.prisma.word.findOne({
-        where: {
-          AnotherUser_firstname_lastname_key: {
-            userId: ctx.userId,
-            en: word,
-          },
-        },
-        include: {
-          entities: {
-            include: {
-              irrverb: true,
-              phrases: true,
-              sentences: true,
-              words: true,
-              disconnectWords: {
-                select: {
-                  id: true,
-                },
-              },
-            },
-          },
-        },
-      });
-      console.log(result);
-      if (result === null) return [];
+      let result = await this.getEntityByUserId(word, ctx.userId);
+      let entities: Entity[] = [];
+
+      if (result === null) {
+        entities = await this.createEntityWithSuperUser(word, ctx.userId);
+        if (entities === null) {
+          const data = await this.translateWordWithParse(word, ctx.userId);
+
+          const entity = await this.createEntityWithAnyData(data, ctx.userId);
+          this.utilCreateEntity(entity, config.superUser, false);
+          return [entity];
+        } else {
+          console.log('SUCCESS - createEntityWithSuperUser');
+          return entities;
+        }
+      }
 
       return result.entities;
     } catch (e) {
@@ -214,9 +255,123 @@ export class TranslateService {
     }
   }
 
+  async utilCreateEntity(entity: Entity, toUserId: number, isNeededEdit: boolean = false) {
+    const words = await Promise.all(entity.words.map(async w => await this.createOrUpdateWord(w.type, w.en, toUserId, undefined, w.translate.map(t => ({id: t.id})))));
+
+    const connectIrr = entity.irrverbId ? {
+      irrverb: {
+        connect: {
+          id: entity.irrverbId
+        }
+      }
+    } : {};
+    try {
+      return this.prisma.entity.create({
+        data: {
+          title: entity.title,
+          User: {
+            connect: {
+              id: toUserId
+            }
+          },
+          isNeededEdit,
+          sentences: {
+            connect: entity.sentences.map(s => ({id: s.id}))
+          },
+          phrases: {
+            connect: entity.phrases.map(p => ({id: p.id}))
+          },
+          words: {
+            connect: words.map(w => ({id: w.id}))
+          },
+          ...connectIrr
+        },
+        include: includeEntity
+      });
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  async createEntityWithSuperUser(word: string, userId: number, isNeededEdit: boolean = false) {
+    const result = await this.getEntityByUserId(word, config.superUser);//todo
+    if (result === null) return null;
+
+    const entities = await Promise.all(result.entities.map(async entity => {
+      return this.utilCreateEntity(entity, userId, isNeededEdit);
+    }));
+    return entities;
+  }
+
+  async createEntityWithAnyData(data: TranslateWordWithParseReturn, userId: number) {
+    let irrvervb: any = {};
+    if (data.irrverb) {
+      irrvervb = {
+        irrverb: {
+          connect: {
+            id: data.irrverb.id
+          }
+        }
+      }
+    }
+
+    const idEntity = await this.prisma.entity.create({
+      data: {
+        ...irrvervb,
+        title: data.title,
+        User: {
+          connect: {
+            id: userId
+          },
+        }
+      },
+      select: {
+        id: true,
+      }
+    });
+
+    for (const other of data.words) {
+      const id = (await this.createOrUpdateWord(other.type, other.en, userId, idEntity.id)).id;
+      for (const translate of other.translate) {
+        await this.createOrUpdateTranslate(id, translate);
+      }
+    }
+
+    for (const phrase of data.phrases) {
+      await this.createOnePhrase(idEntity.id, phrase.phrase, phrase.ru)
+    }
+    for (const sentence of data.sentences) {
+      await this.createOneSentence(idEntity.id, sentence.sentence, sentence.ru)
+    }
+    return this.prisma.entity.findOne({
+      where: {
+        id: idEntity.id
+      },
+      include: includeEntity
+    });
+  }
+
+  async getEntityByUserId(word: string, userId: number) {
+    const result = await this.prisma.word.findOne({
+      where: {
+        AnotherUser_firstname_lastname_key: {
+          userId: userId,
+          en: word,
+        },
+      },
+      include: {
+        entities: {
+          include: includeEntity
+        },
+      }
+    });
+    return result;
+  }
+
   async updatePhraseByEntity(data: UpdatePhrasesInput) {
-    const connect: {id: number}[] = [];
-    for(const phrase of data.phrases) {
+    const connect: { id: number }[] = [];
+    for (const phrase of data.phrases) {
       const res = await this.prisma.phrase.upsert({
         where: {
           phrase: phrase.phrase
@@ -229,7 +384,7 @@ export class TranslateService {
           ru: phrase.ru,
         }
       });
-      if(phrase.id !== res.id) {
+      if (phrase.id !== res.id) {
         data.disconnectPhrases.push(phrase.id);
         connect.push({id: res.id});
       }
@@ -257,8 +412,9 @@ export class TranslateService {
       },
       data: {
         disconnectWords: {
-          set: data.disconnectWords.map((d) => ({ id: d })),
+          set: data.disconnectWords.map((d) => ({id: d})),
         },
+        isCreate: true
       },
     });
     for (const w of data.words) {
@@ -282,18 +438,6 @@ export class TranslateService {
         if (t.id !== idTranslate.id) {
           w.disconnectTranslate.push(t.id);
           connect.push({id: idTranslate.id});
-         /* await this.prisma.word.update({
-            where: {
-              id: w.id,
-            },
-            data: {
-              translate: {
-                connect: {
-                  id: idTranslate.id,
-                },
-              },
-            },
-          });*/
         }
       }
 
@@ -304,7 +448,7 @@ export class TranslateService {
         data: {
           type: w.type,
           disconnectTranslate: {
-            set: w.disconnectTranslate.map((d) => ({ id: d })),
+            set: w.disconnectTranslate.map((d) => ({id: d})),
           },
           translate: {
             connect
@@ -314,48 +458,6 @@ export class TranslateService {
     }
     return true;
   }
-  /*async createFullEntity(data: TranslateWordWithParseInput, ctx: Context) {
-    let irrvervb: any = {};
-    if (data.irrverbId) {
-      irrvervb = {
-        irrverb: {
-          connect: {
-            id: data.irrverbId
-          }
-        }
-      }
-    }
-
-    const idEntity = await this.prisma.entity.create({
-      data: {
-        ...irrvervb,
-        title: data.title,
-        User: {
-          connect: {
-            id: ctx.userId
-          },
-        }
-      },
-      select: {
-        id: true,
-      }
-    });
-
-    for (const other of data.words) {
-      const id = (await this.createOrUpdateWord(idEntity.id, other.type, other.en, ctx.userId)).id;
-      for (const translate of other.translate) {
-        await this.createOrUpdateTranslate(id, translate);
-      }
-    }
-
-    for (const phrase of data.phrases) {
-      await this.createOnePhrase(idEntity.id, phrase.phrase, phrase.ru)
-    }
-    for (const sentence of data.sentences) {
-      await this.createOneSentence(idEntity.id, sentence.sentence, sentence.ru)
-    }
-    return idEntity.id;
-  }*/
 
   async createOrUpdateTranslate(
     idWord: number,
@@ -438,11 +540,19 @@ export class TranslateService {
   }
 
   async createOrUpdateWord(
-    entityId: number,
-    tag: PartOfSpeech,
+    tag: PartOfSpeech | any,
     en: string,
     userId: number,
+    entityId?: number,
+    translate: { id: number }[] = [],
   ) {
+    const obj = entityId !== undefined ? {
+      entities: {
+        connect: {
+          id: entityId,
+        },
+      },
+    } : {};
     return this.prisma.word.upsert({
       where: {
         AnotherUser_firstname_lastname_key: {
@@ -458,18 +568,13 @@ export class TranslateService {
             id: userId,
           },
         },
-        entities: {
-          connect: {
-            id: entityId,
-          },
+        translate: {
+          connect: translate
         },
+        ...obj
       },
       update: {
-        entities: {
-          connect: {
-            id: entityId,
-          },
-        },
+        ...obj
       },
     });
   }
@@ -481,9 +586,9 @@ export class TranslateService {
     userId: number,
     translate: string[],
   ) {
-    const word = await this.createOrUpdateWord(entityId, tag, en, userId);
+    const word = await this.createOrUpdateWord(tag, en, userId, entityId);
     for (let t of translate) {
-      await this.createOrUpdateTranslate(word.id, { ru: t, type: tag });
+      await this.createOrUpdateTranslate(word.id, {ru: t, type: tag});
     }
 
     return this.prisma.word.findOne({

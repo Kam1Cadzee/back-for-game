@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { Button, Col, Popconfirm, Row, Table, Tooltip } from 'antd';
 import TitleTableWords from './TitleTableWords';
 import { isEmptyObject } from '../../../utils/isEmptyObject';
@@ -9,7 +9,8 @@ import { IDeleteSmth, ITranslate, IWord } from '../../../typings/IEntity';
 import { useMutation } from '@apollo/react-hooks';
 import { MUTATION } from '../../../graphql/mutation';
 import { EditableCell, EditableRow } from '../../common/EditableTableComponent';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
+import {RedoHistory} from '../../../utils/RedoHistory';
 
 const { Column } = Table;
 
@@ -24,13 +25,14 @@ interface ICreateWord {
   translate: string[];
   type: PartOfSpeech;
 }
-
+interface IDeleteTranslate {idWord: number, idTranslate?: number}
 interface IDataColumn {
   key: number;
   en: string;
   type: PartOfSpeech;
   children: IDataChildColumn[];
   dataIndex: string;
+  isDelete: boolean;
 }
 
 interface IDataChildColumn {
@@ -40,29 +42,36 @@ interface IDataChildColumn {
   count: number;
   idWord: number;
   dataIndex: string;
+  isDelete: boolean;
 }
 
 interface ICache {
   [id: string]: IWord;
 }
 
-const getDataOfFilter = (words: IWord[], disconnectWords: IDeleteSmth[]) => {
+const getDataOfFilter = (words: IWord[], disconnectWords: IDeleteSmth[], isShowDelete: boolean) => {
   return words
-    .filter((w) => !disconnectWords.some((d) => d.id === w.id!))
+    .filter((w) => !(isShowDelete ? [] : disconnectWords).some((d) => d.id === w.id!))
     .map((w, i) => {
-      const filterTranslate = w.translate.filter(
+
+      const filterTranslate = isShowDelete ? w.translate : w.translate.filter(
         (t) => !w.disconnectTranslate.some((d) => d.id === t.id),
       );
+      const count = w.translate.filter(
+        (t) => !w.disconnectTranslate.some((d) => d.id === t.id)).length;
+
       return {
         key: w.id || i,
         en: w.en,
         type: w.type,
+        isDelete: isShowDelete ? disconnectWords.some(d => d.id === w.id) : false,
         children: filterTranslate.map((t, index) => ({
           key: t.id || index,
           ru: t.ru,
           type: t.type,
-          count: filterTranslate.length,
+          count,
           idWord: w.id,
+          isDelete: isShowDelete ? w.disconnectTranslate.some(d => d.id === t.id) : false,
         })),
       };
     });
@@ -75,9 +84,11 @@ const TableEditWords = (props: ITableEditWordsProps) => {
     MUTATION.updateWordsByEntity,
   );
   const cache = useRef({} as ICache);
+  const history = useRef(new RedoHistory());
+  const [isShowDeleted, setShowDeleted] = useState(false);
   const [noDataWords, setNoDataWords] = useState(props.words);
   const [disconnectWords, setDisconnectWords] = useState(props.disconnectWords);
-  const truthDataWords = getDataOfFilter(noDataWords, disconnectWords);
+  const truthDataWords = getDataOfFilter(noDataWords, disconnectWords, isShowDeleted);
 
   const components = {
     body: {
@@ -86,21 +97,55 @@ const TableEditWords = (props: ITableEditWordsProps) => {
     },
   };
 
+  useEffect(() => {
+    history.current.addHandler({
+      addDeleteWord: (id: number) => {
+        setDisconnectWords((dis) => {
+          return [...dis, { id }];
+        });
+      },
+      removeDeleteWord: (id: number) => {
+        setDisconnectWords((dis) => {
+          return dis.filter(d => d.id !== id);
+        });
+      }
+    });
+    history.current.addHandler({
+      addDeleteTranslate: (obj: IDeleteTranslate) => {
+        handlerDeleteTranslate(obj);
+      },
+      removeDeleteTranslate: (obj: IDeleteTranslate) => {
+        handlerRemoveDeleteTranslate(obj);
+      }
+    })
+  }, []);
   const handleDelete = async (dataDelete: IDataColumn & IDataChildColumn) => {
     if (dataDelete.children) {
+      history.current.addAction({
+        action: 'addDeleteWord',
+        payload: dataDelete.key
+      });
       setDisconnectWords((dis) => {
         return [...dis, { id: dataDelete.key }];
       });
     } else {
-      const newDataWords = [...noDataWords];
-      const findWord = newDataWords.find((w) => w.id === dataDelete.idWord)!;
+      history.current.addAction({
+        action: 'addDeleteTranslate',
+        payload: {idTranslate: dataDelete.key, idWord: dataDelete.idWord}
+      });
+      handlerDeleteTranslate({idTranslate: dataDelete.key, idWord: dataDelete.idWord});
+    }
+  };
+  const handlerDeleteTranslate = ({idTranslate, idWord}: IDeleteTranslate) => {
+    setNoDataWords(words => {
+      const findWord = words.find((w) => w.id === idWord)!;
       findWord.disconnectTranslate = [
         ...findWord.disconnectTranslate,
-        { id: dataDelete.key },
+        { id: idTranslate! },
       ];
-      cache.current[dataDelete.idWord] = findWord;
-      setNoDataWords(newDataWords);
-    }
+      cache.current[idWord] = findWord;
+      return [...words]
+    })
   };
   const handleSave = (row: IDataColumn & IDataChildColumn) => {
     setNoDataWords((words) => {
@@ -146,6 +191,10 @@ const TableEditWords = (props: ITableEditWordsProps) => {
       },
     });
     const data: IWord = res.data.createOrUpdateWordWithTranslate;
+    history.current.addAction({
+      payload: data.id,
+      action: 'removeDeleteWord'
+    });
     setNoDataWords((words) => {
       return [...words, data];
     });
@@ -184,6 +233,34 @@ const TableEditWords = (props: ITableEditWordsProps) => {
       cache.current = {};
     });
   };
+
+  const handleReturn = ({idTranslate, idWord}:{idWord: number, idTranslate?: number}) => {
+    if(idTranslate) {
+      history.current.addAction({
+        action: 'removeDeleteTranslate',
+        payload: {idTranslate, idWord}
+      });
+      handlerRemoveDeleteTranslate({idTranslate, idWord});
+    }
+    else {
+      history.current.addAction({
+        action: 'removeDeleteWord',
+        payload: idWord
+      });
+      setDisconnectWords(dis => {
+        return dis.filter(d => d.id !== idWord);
+      })
+    }
+  };
+
+  const handlerRemoveDeleteTranslate = ({idWord, idTranslate}: IDeleteTranslate) => {
+    setNoDataWords(words => {
+      const findIndex = words.findIndex(w => w.id === idWord);
+      words[findIndex].disconnectTranslate = words[findIndex].disconnectTranslate.filter(d => d.id !== idTranslate);
+      return [...words];
+    })
+  };
+
   return (
     <Table
       bordered={false}
@@ -199,6 +276,12 @@ const TableEditWords = (props: ITableEditWordsProps) => {
           onUpdate={handleUpdate}
           loadingUpdate={loadingUpdate}
           disabled={isEmptyObject(cache.current)}
+          isShowDeleted={isShowDeleted}
+          checkedDeleted={setShowDeleted}
+          disabledPrev={!history.current.isPrev()}
+          disabledNext={!history.current.isNext()}
+          onPrev={history.current.prev}
+          onNext={history.current.next}
         />
       )}
     >
@@ -250,12 +333,31 @@ const TableEditWords = (props: ITableEditWordsProps) => {
         title="Operation"
         dataIndex="operation"
         render={(text: any, record: IDataColumn & IDataChildColumn) => {
+          const isEn = !record.idWord;
+          const idWord = isEn ? record.key : record.idWord!;
+          const idTranslate = isEn ? undefined : record.key;
+
+          if(record.isDelete) {
+            return (
+              <Popconfirm
+                title="Sure to return?"
+                onConfirm={() => handleReturn({idWord, idTranslate})}
+              >
+                <Button
+                  size="small"
+                  shape="circle-outline"
+                  icon={<RedoOutlined />}
+                />
+              </Popconfirm>
+            )
+          }
           if (record.count && record.count === 1) {
             return null;
           }
+
           return (
             <Row align="middle">
-              {!record.idWord && (
+              {isEn && (
 
                   <CreateTranslateOfWord
                     idWord={record.key}
@@ -266,14 +368,12 @@ const TableEditWords = (props: ITableEditWordsProps) => {
                 title="Sure to delete?"
                 onConfirm={() => handleDelete({ ...record })}
               >
-                <Tooltip title="Delete">
-                  <Button
-                    danger
-                    size="small"
-                    shape="circle"
-                    icon={<DeleteOutlined />}
-                  />
-                </Tooltip>
+                <Button
+                  danger
+                  size="small"
+                  shape="circle"
+                  icon={<DeleteOutlined />}
+                />
               </Popconfirm>
             </Row>
           );

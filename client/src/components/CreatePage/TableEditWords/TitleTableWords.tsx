@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Form, Input, Popover, Row, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import {Button, Form, Input, Popover, Row, Select, Switch} from 'antd';
+import { PlusOutlined, CloseOutlined, CheckOutlined, LeftSquareOutlined, RightSquareOutlined } from '@ant-design/icons';
 import SelectPartOfSpeech from './SelectPartOfSpeech';
 import { PartOfSpeech } from '../../../typings/PartOfSpeech';
 import { useQuery } from '@apollo/react-hooks';
@@ -15,6 +15,12 @@ interface ITitleTableProps {
   onUpdate: any;
   loadingUpdate: boolean;
   disabled: boolean;
+  isShowDeleted: boolean,
+  checkedDeleted: (value: boolean) => any;
+  onPrev: any;
+  onNext: any;
+  disabledPrev: boolean;
+  disabledNext: boolean;
 }
 
 interface IContentTitleTableProps {
@@ -98,6 +104,12 @@ const TitleTableWords = ({
   onUpdate,
   loadingUpdate,
   disabled,
+  isShowDeleted,
+  checkedDeleted,
+  onPrev,
+  onNext,
+  disabledNext,
+  disabledPrev
 }: ITitleTableProps) => {
   const [isShow, setIsShow] = useState(false);
 
@@ -109,7 +121,30 @@ const TitleTableWords = ({
     setIsShow(visible);
   };
   return (
-    <Row justify="end">
+    <Row justify="space-between">
+      <div>
+        <Button
+          size="small"
+          shape="circle-outline"
+          onClick={onPrev}
+          disabled={disabledPrev}
+          icon={<LeftSquareOutlined />}
+        />
+        <Button
+          size="small"
+          shape="circle-outline"
+          onClick={onNext}
+          disabled={disabledNext}
+          icon={<RightSquareOutlined />}
+        />
+        <Switch
+          checkedChildren={<CheckOutlined />}
+          unCheckedChildren={<CloseOutlined />}
+          checked={isShowDeleted}
+          onChange={checked => checkedDeleted(checked)}
+        />
+        Show deleted
+      </div>
       <Button.Group>
         <Button
           onClick={onUpdate}

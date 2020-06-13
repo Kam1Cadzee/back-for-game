@@ -61,14 +61,12 @@ const CreateTranslateOfWord = ({ idWord, onAdd }: IAddTranslateProps) => {
       onVisibleChange={handleVisibleChange}
       placement="rightBottom"
     >
-      <Tooltip title="Add translate">
-        <Button
-          size="middle"
-          shape="circle"
-          onClick={() => setIsShow(true)}
-          icon={<PlusOutlined />}
-        />
-      </Tooltip>
+      <Button
+        size="middle"
+        shape="circle"
+        onClick={() => setIsShow(true)}
+        icon={<PlusOutlined />}
+      />
     </Popover>
   );
 };

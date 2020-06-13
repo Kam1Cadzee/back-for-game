@@ -2,28 +2,33 @@ import React, {useEffect} from 'react';
 import {BrowserRouter, Route, Switch} from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import LayoutPage from './pages/LayoutPage';
-import ApolloClient, {gql} from 'apollo-boost';
 import {ApolloProvider, useMutation,} from '@apollo/react-hooks';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import FRAGMENTS from './graphql/fragments';
 import QUERIES from './graphql/queries';
 import 'antd/dist/antd.css';
 import './App.css';
-import {MUTATION} from './graphql/mutation';
+import { ApolloLink } from '@apollo/client';
+import { ApolloClient } from 'apollo-client';
+import { HttpLink } from 'apollo-link-http';
+
+const authLink: any = new ApolloLink((operation, forward) => {
+  operation.setContext(({ headers }: any) => ({ headers: {
+      authorization: `Bearer ${localStorage.getItem('token')}`, // however you get your token
+      ...headers
+    }}));
+  return forward(operation);
+});
+const link = new HttpLink({
+  uri: 'http://localhost:3005/graphql',
+});
 
 const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-  uri: 'http://192.168.31.66:3005/graphql',
   cache,
-  headers: {
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  },
-  onError: error => {
-    console.log('------------------');
-    console.log(error);
-    console.log('------------------');
-  },
+  link: authLink.concat(link),
+  connectToDevTools: true,
 });
 
 cache.writeData({

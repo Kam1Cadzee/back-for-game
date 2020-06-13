@@ -28,11 +28,6 @@ export class TranslateResolver {
     return await this.service.translatePhrase(phrase);
   }
 
-  @Query(returns => TranslateWordWithParseReturn)
-  async translateWordWithParse(@Arg('word') word: string) {
-    return await this.service.translateWordWithParse(word);
-  }
-
   @Mutation(returns => Boolean)
   async updateWordsByEntity(@Ctx() ctx: Context, @Arg('data') data: TranslateWordWithParseInput) {
     return await this.service.updateWordsByEntity(data);
@@ -43,7 +38,9 @@ export class TranslateResolver {
     return this.service.createOrUpdateTranslate(data.idWord, data.translation);
   }
 
-  @Query(returns => [Entity])
+  @Query(returns => [Entity], {
+    nullable: 'items'
+  })
   async getEntitiesByWord(@Ctx() ctx: Context, @Arg('word') word: string) {
     return await this.service.getEntitiesByWord(word, ctx);
   }

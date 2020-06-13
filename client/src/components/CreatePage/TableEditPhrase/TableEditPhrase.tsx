@@ -134,14 +134,12 @@ const TableEditPhrase = (props: ITableEditPhraseProps) => {
               title="Sure to delete?"
               onConfirm={() => handleDelete({ ...record })}
             >
-              <Tooltip title="Delete">
-                <Button
-                  danger
-                  size="small"
-                  shape="circle"
-                  icon={<DeleteOutlined />}
-                />
-              </Tooltip>
+              <Button
+                danger
+                size="small"
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
             </Popconfirm>
           );
         }}

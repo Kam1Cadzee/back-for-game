@@ -17,6 +17,7 @@ const config = {
   }),
   azure_keys_count: () => config.azure_keys.length,
   confidence: +process.env.CONFIDENCE,
+  superUser: +process.env.SUPER_USER
 };
 
 export default config;

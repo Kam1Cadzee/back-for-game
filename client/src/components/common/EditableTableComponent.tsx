@@ -80,7 +80,6 @@ export const EditableCell = ({
       </div>
     );
   }
-
   if (dataIndex === 'en' && record.children === undefined) return null;
   if (dataIndex === 'ru' && record.children) return null;
   return <td {...restProps}>{childNode}</td>;

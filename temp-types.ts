@@ -5,6 +5,7 @@ export type TempTypes =
                           'StatusMobile' | 
                                   'Word' | 
                                 'Entity' | 
+                           'SettingRole' | 
                               'Sentence' | 
                                 'Phrase' | 
                              'MobileApp' | 
@@ -37,6 +38,7 @@ export type TempTypes =
            'WordDisconnectTranslateArgs' | 
                       'WordEntitiesArgs' | 
               'IrrverbRelationsResolver' | 
+                   'IrrverbEntitiesArgs' | 
            'DeleteManyMobileAppResolver' | 
              'FindManyMobileAppResolver' | 
                'DeleteMobileAppResolver' | 
@@ -145,6 +147,24 @@ export type TempTypes =
         'DeleteManyPartOfSpeechDescArgs' | 
             'UpsertPartOfSpeechDescArgs' | 
     'DeleteManyPartOfSpeechDescResolver' | 
+         'UpdateManySettingRoleResolver' | 
+               'SettingRoleCrudResolver' | 
+             'UpdateSettingRoleResolver' | 
+          'AggregateSettingRoleResolver' | 
+         'DeleteManySettingRoleResolver' | 
+            'FindOneSettingRoleResolver' | 
+             'CreateSettingRoleResolver' | 
+             'DeleteSettingRoleResolver' | 
+           'FindManySettingRoleResolver' | 
+             'UpsertSettingRoleResolver' | 
+             'DeleteManySettingRoleArgs' | 
+               'FindManySettingRoleArgs' | 
+                 'CreateSettingRoleArgs' | 
+             'UpdateManySettingRoleArgs' | 
+                'FindOneSettingRoleArgs' | 
+                 'DeleteSettingRoleArgs' | 
+                 'UpsertSettingRoleArgs' | 
+                 'UpdateSettingRoleArgs' | 
                   'SentenceCrudResolver' | 
             'UpdateManySentenceResolver' | 
             'DeleteManySentenceResolver' | 
@@ -205,6 +225,7 @@ export type TempTypes =
                      'AggregateSentence' | 
                          'AggregateUser' | 
                        'AggregatePhrase' | 
+                  'AggregateSettingRole' | 
                       'AggregateIrrverb' | 
                          'AggregateWord' | 
                           'BatchPayload' | 
@@ -216,6 +237,7 @@ export type TempTypes =
                 'AggregateWordCountArgs' | 
            'AggregateMobileAppCountArgs' | 
               'AggregatePhraseCountArgs' | 
+         'AggregateSettingRoleCountArgs' | 
             'AggregateSentenceCountArgs' | 
                 'AggregateUserCountArgs' | 
        'SentenceUpdateManyMutationInput' | 
@@ -248,9 +270,7 @@ export type TempTypes =
                     'PhraseOrderByInput' | 
 'EntityUpsertWithWhereUniqueWithoutWordsInput' | 
  'EntityCreateManyWithoutSentencesInput' | 
-    'IrrverbCreateOneWithoutEntityInput' | 
          'EntityUpdateManyMutationInput' | 
-       'IrrverbUpsertWithoutEntityInput' | 
                     'IrrverbUpdateInput' | 
 'Unique_title_userIdCompoundUniqueInput' | 
                 'PhraseWhereUniqueInput' | 
@@ -263,11 +283,13 @@ export type TempTypes =
              'TranslateScalarWhereInput' | 
                   'WordScalarWhereInput' | 
    'EntityUpdateWithoutIrrverbDataInput' | 
+     'IrrverbCreateWithoutEntitiesInput' | 
                        'WordUpdateInput' | 
 'TranslateCreateWithoutDisconnectWordsInput' | 
 'WordUpsertWithWhereUniqueWithoutUserInput' | 
 'EntityUpdateWithWhereUniqueWithoutUserInput' | 
               'SentenceScalarWhereInput' | 
+                 'SettingRoleWhereInput' | 
     'WordUpdateManyWithoutEntitiesInput' | 
      'EntityUpdateWithoutWordsDataInput' | 
 'TranslateUpdateWithWhereUniqueWithoutWordsInput' | 
@@ -282,6 +304,8 @@ export type TempTypes =
                 'EntityScalarWhereInput' | 
                      'PhraseCreateInput' | 
                     'EntityOrderByInput' | 
+               'SettingRoleOrderByInput' | 
+  'IrrverbCreateOneWithoutEntitiesInput' | 
                           'StringFilter' | 
 'WordUpdateWithoutDisconnectEntitiesDataInput' | 
                   'SentenceOrderByInput' | 
@@ -292,10 +316,9 @@ export type TempTypes =
       'MobileAppUpdateManyMutationInput' | 
 'TranslateUpsertWithWhereUniqueWithoutWordsInput' | 
 'SentenceUpdateWithWhereUniqueWithoutEntitiesInput' | 
-    'EntityCreateOneWithoutIrrverbInput' | 
-       'EntityUpsertWithoutIrrverbInput' | 
       'EntityCreateManyWithoutUserInput' | 
                    'SentenceUpdateInput' | 
+'EntityUpsertWithWhereUniqueWithoutIrrverbInput' | 
 'PhraseCreateWithoutDisconnectEntitiesInput' | 
                      'EntityCreateInput' | 
 'WordUpdateWithoutDisconnectTranslateDataInput' | 
@@ -303,23 +326,24 @@ export type TempTypes =
          'PhraseUpdateManyMutationInput' | 
                         'UserWhereInput' | 
                'IrrverbWhereUniqueInput' | 
-   'IrrverbUpdateWithoutEntityDataInput' | 
 'WordUpdateWithWhereUniqueWithoutEntitiesInput' | 
  'EntityUpdateManyWithoutSentencesInput' | 
     'WordUpdateManyWithWhereNestedInput' | 
+ 'IrrverbUpdateWithoutEntitiesDataInput' | 
                       'PhraseWhereInput' | 
                     'PartOfSpeechFilter' | 
 'EntityUpdateWithWhereUniqueWithoutDisconnectPhrasesInput' | 
                   'MobileAppUpdateInput' | 
 'EntityCreateWithoutDisconnectWordsInput' | 
+                'SettingRoleCreateInput' | 
      'UserCreateOneWithoutEntitiesInput' | 
         'WordUpdateManyWithoutUserInput' | 
-    'IrrverbUpdateOneWithoutEntityInput' | 
-    'EntityUpdateOneWithoutIrrverbInput' | 
+    'SettingRoleUpdateManyMutationInput' | 
 'EntityUpdateManyWithoutDisconnectSentencesInput' | 
                        'UserUpdateInput' | 
 'EntityUpsertWithWhereUniqueWithoutSentencesInput' | 
   'PhraseUpdateManyWithWhereNestedInput' | 
+  'IrrverbUpdateOneWithoutEntitiesInput' | 
 'WordCreateWithoutDisconnectTranslateInput' | 
            'PartOfSpeechDescCreateInput' | 
      'EntityCreateManyWithoutWordsInput' | 
@@ -332,6 +356,7 @@ export type TempTypes =
 'EntityCreateWithoutDisconnectSentencesInput' | 
 'EntityUpdateWithWhereUniqueWithoutWordsInput' | 
 'EntityUpdateWithoutDisconnectSentencesDataInput' | 
+   'EntityUpdateManyWithoutIrrverbInput' | 
  'EntityUpdateWithoutSentencesDataInput' | 
   'TranslateCreateManyWithoutWordsInput' | 
                     'StatusMobileFilter' | 
@@ -345,7 +370,6 @@ export type TempTypes =
    'EntityCreateManyWithoutPhrasesInput' | 
 'WordUpdateWithWhereUniqueWithoutTranslateInput' | 
 'PhraseUpdateWithoutDisconnectEntitiesDataInput' | 
-       'IrrverbCreateWithoutEntityInput' | 
  'UserUpdateOneRequiredWithoutWordInput' | 
                'WordUpdateManyDataInput' | 
        'EntityCreateWithoutPhrasesInput' | 
@@ -356,6 +380,7 @@ export type TempTypes =
                          'BooleanFilter' | 
                   'MobileAppCreateInput' | 
 'PhraseCreateManyWithoutDisconnectEntitiesInput' | 
+                'SettingRoleUpdateInput' | 
 'SentenceUpdateWithWhereUniqueWithoutDisconnectEntitiesInput' | 
           'PartOfSpeechDescOrderByInput' | 
       'TranslateCreateWithoutWordsInput' | 
@@ -383,6 +408,8 @@ export type TempTypes =
 'SentenceUpdateManyWithoutEntitiesInput' | 
          'EntityCreateWithoutWordsInput' | 
                 'EntityWhereUniqueInput' | 
+   'EntityCreateManyWithoutIrrverbInput' | 
+           'SettingRoleWhereUniqueInput' | 
 'EntityCreateWithoutDisconnectPhrasesInput' | 
     'UserUpdateWithoutEntitiesDataInput' | 
        'EntityCreateWithoutIrrverbInput' | 
@@ -390,6 +417,7 @@ export type TempTypes =
 'TranslateCreateManyWithoutDisconnectWordsInput' | 
                       'UserOrderByInput' | 
 'EntityUpsertWithWhereUniqueWithoutDisconnectWordsInput' | 
+     'IrrverbUpsertWithoutEntitiesInput' | 
 'TranslateUpsertWithWhereUniqueWithoutDisconnectWordsInput' | 
 'TranslateUpdateManyWithWhereNestedInput' | 
               'SentenceWhereUniqueInput' | 
@@ -414,6 +442,7 @@ export type TempTypes =
   'PhraseCreateManyWithoutEntitiesInput' | 
                        'WordCreateInput' | 
            'SentenceUpdateManyDataInput' | 
+'EntityUpdateWithWhereUniqueWithoutIrrverbInput' | 
             'UserCreateWithoutWordInput' | 
    'EntityUpdateWithoutPhrasesDataInput' | 
                        'TranslateFilter' | 
