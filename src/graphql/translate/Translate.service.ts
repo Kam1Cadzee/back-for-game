@@ -303,7 +303,7 @@ export class TranslateService {
   async getEntitiesByWord(word: string, ctx: Context) {
     let result = await this.getEntityByUserId(word, ctx.userId);
     console.log(result)
-    let entities: Entity[] = [];
+    let entities: any[] = [];
 
     if (result === null) {
       entities = await this.createEntityWithSuperUser(word, ctx.userId);
