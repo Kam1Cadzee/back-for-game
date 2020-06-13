@@ -315,7 +315,7 @@ export class TranslateService {
 
         const data = await this.translateWordWithParse(word, ctx.userId);
 
-        const entity = await this.createEntityWithAnyData(data, ctx.userId);
+        const entity: any = await this.createEntityWithAnyData(data, ctx.userId);
         this.utilCreateEntity(entity, config.superUser, false);
         return [entity];
       } else {
