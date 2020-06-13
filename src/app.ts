@@ -7,31 +7,12 @@ import {createContext} from './context';
 import {applyMiddleware} from 'graphql-middleware';
 import config from './config';
 import {buildSchema} from 'type-graphql';
-import configTypeGraph from '../configTypeGraph';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
 import serviceABBYY from './service/abbyyService';
 import * as path from 'path';
 
 const startServer = async () => {
-  await configTypeGraph({
-    blackList: [
-      'UserCrudResolver',
-      'WordCrudResolver',
-      'CreateUserResolver',
-      'CreateWordResolver',
-      'CreateTranslateResolver',
-      'TranslateCrudResolver',
-      {
-        file: 'User',
-        fields: ['password', 'createdAt']
-      },
-      {
-        file: 'UserCreateInput',
-        fields: ['createdAt']
-      }
-    ]
-  });
   const middleware = applyMiddleware(await bootstrap(), permissions);
   const resultABBYY = await serviceABBYY.auth();
 
