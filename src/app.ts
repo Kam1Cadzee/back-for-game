@@ -10,7 +10,6 @@ import {buildSchema} from 'type-graphql';
 import {permissions} from './permissions/permission';
 import cors from 'cors';
 import serviceABBYY from './service/abbyyService';
-import * as path from 'path';
 
 const startServer = async () => {
   const middleware = applyMiddleware(await bootstrap(), permissions);
