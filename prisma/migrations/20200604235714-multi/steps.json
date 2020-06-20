@@ -1,0 +1,283 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Entity",
+      "field": "disconnectWords",
+      "type": "Word",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectWords"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectWords"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectEntities\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Entity",
+      "field": "disconnectPhrases",
+      "type": "Phrase",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectPhrases"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectPhrases"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectPhrases\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Entity",
+      "field": "disconnectSentences",
+      "type": "Sentence",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectSentences"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Entity",
+          "field": "disconnectSentences"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectSentences\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Word",
+      "field": "disconnectEntities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Word",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Word",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectEntities\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Word",
+      "field": "disconnectTranslate",
+      "type": "Translate",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Word",
+          "field": "disconnectTranslate"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Word",
+          "field": "disconnectTranslate"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectTranslate\""
+    },
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Word",
+          "field": "translate"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Translate",
+      "field": "disconnectWords",
+      "type": "Word",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Translate",
+          "field": "disconnectWords"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Translate",
+          "field": "disconnectWords"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectTranslate\""
+    },
+    {
+      "tag": "DeleteDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Translate",
+          "field": "words"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Phrase",
+      "field": "disconnectEntities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Phrase",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Phrase",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectPhrases\""
+    },
+    {
+      "tag": "CreateField",
+      "model": "Sentence",
+      "field": "disconnectEntities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Sentence",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Sentence",
+          "field": "disconnectEntities"
+        },
+        "directive": "relation"
+      },
+      "argument": "",
+      "value": "\"disconnectSentences\""
+    }
+  ]
+}

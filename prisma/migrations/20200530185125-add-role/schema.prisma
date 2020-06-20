@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "node_modules/typegraphql-prisma/generator.js"
+  output   = "../prisma/generated/type-graphql"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String   @default("") @unique
+  id        Int      @default(autoincrement()) @id
+  name      String   @default("")
+  lastName  String   @default("")
+  password  String   @default("")
+  entities  Entity[]
+  role      Role @default(STANDARD)
+}
+
+model PartOfSpeechDesc {
+  id   Int          @default(autoincrement()) @id
+  type PartOfSpeech
+  ru   String
+  ua   String
+  en   String
+}
+enum Role {
+  ADMIN
+  STANDARD
+}
+enum PartOfSpeech {
+  ADJ
+  ADV
+  CONJ
+  DET
+  MODAL
+  NOUN
+  PREP
+  PRON
+  VERB
+  OTHER
+}
+
+model Irrverb {
+  id      Int     @default(autoincrement()) @id
+  form1EN String
+  form2EN String
+  form3EN String
+  ru      String
+  Entity  Entity?
+}
+
+model Entity {
+  id        Int        @default(autoincrement()) @id
+  title     String     @unique
+  words     Word[]
+  User      User       @relation(fields: [userId], references: [id])
+  userId    Int
+  phrases   Phrase[]
+  sentences Sentence[]
+  irrverb   Irrverb?   @relation(fields: [irrverbId], references: [id])
+  irrverbId Int?
+}
+
+model Word {
+  id        Int          @default(autoincrement()) @id
+  en        String       @unique
+  translate Translate[]  @relation(references: [id])
+  type      PartOfSpeech @default(OTHER)
+  entity    Entity       @relation(fields: [entityId], references: [id])
+  entityId  Int
+}
+
+model Translate {
+  id    Int          @default(autoincrement()) @id
+  ru    String       @unique
+  type  PartOfSpeech @default(OTHER)
+  words Word[]       @relation(references: [id])
+}
+
+model Phrase {
+  id       Int     @default(autoincrement()) @id
+  phrase   String
+  ru       String
+  Entity   Entity? @relation(fields: [entityId], references: [id])
+  entityId Int?
+}
+
+model Sentence {
+  id       Int     @default(autoincrement()) @id
+  sentence String
+  ru       String
+  Entity   Entity? @relation(fields: [entityId], references: [id])
+  entityId Int?
+}

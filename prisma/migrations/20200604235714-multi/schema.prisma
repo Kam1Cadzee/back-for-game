@@ -9,20 +9,19 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model User {
-  createdAt  DateTime @default(now())
-  email      String   @default("") @unique
-  id         Int      @default(autoincrement()) @id
-  name       String   @default("")
-  lastName   String   @default("")
-  password   String   @default("")
-  entities   Entity[]
-  role       Role     @default(STANDARD)
-  Word       Word[]
-  countQuery Int      @default(0)
+  createdAt DateTime @default(now())
+  email     String   @default("") @unique
+  id        Int      @default(autoincrement()) @id
+  name      String   @default("")
+  lastName  String   @default("")
+  password  String   @default("")
+  entities  Entity[]
+  role      Role     @default(STANDARD)
+  Word      Word[]
 }
 
 model PartOfSpeechDesc {
@@ -33,18 +32,9 @@ model PartOfSpeechDesc {
   en   String
 }
 
-model SettingRole {
-  id    Int    @default(autoincrement()) @id
-  role  Role
-  name  String
-  value String
-}
-
 enum Role {
   ADMIN
-  TEST
   STANDARD
-  SUPER
 }
 
 enum PartOfSpeech {
@@ -61,12 +51,12 @@ enum PartOfSpeech {
 }
 
 model Irrverb {
-  id       Int      @default(autoincrement()) @id
-  form1EN  String
-  form2EN  String
-  form3EN  String
-  ru       String
-  entities Entity[]
+  id      Int     @default(autoincrement()) @id
+  form1EN String
+  form2EN String
+  form3EN String
+  ru      String
+  Entity  Entity?
 }
 
 model Entity {
@@ -83,7 +73,6 @@ model Entity {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @default(now())
   @@unique([title, userId], name: "unique_title_userId")
-  isCreate Boolean @default(false)
 
   disconnectWords     Word[]     @relation("disconnectEntities")
   disconnectPhrases   Phrase[]   @relation("disconnectPhrases")
@@ -122,8 +111,6 @@ model Phrase {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectPhrases")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model Sentence {
@@ -132,8 +119,6 @@ model Sentence {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectSentences")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model MobileApp {

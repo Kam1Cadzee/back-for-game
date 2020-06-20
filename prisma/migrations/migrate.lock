@@ -1,0 +1,19 @@
+# IF THERE'S A GIT CONFLICT IN THIS FILE, DON'T SOLVE IT MANUALLY!
+# INSTEAD EXECUTE `prisma migrate fix`
+# Prisma Migrate lockfile v1
+# Read more about conflict resolution here: TODO
+
+20200524192800-init
+20200524212543-uniq
+20200530185125-add-role
+20200531181019-time
+20200531234003-multi-entities
+20200601005347-unique
+20200601010323-without-unique
+20200604002834-word
+20200604010102-enti
+20200604235714-multi
+20200612014322-add-test-role
+20200613000349-many-entities
+20200613235414-role
+20200620161524-update

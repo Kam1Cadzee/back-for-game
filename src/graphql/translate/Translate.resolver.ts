@@ -10,6 +10,8 @@ import {
   TranslateWordWithParseInput,
   TranslateWordWithParseReturn,
   UpdatePhrasesInput,
+  UpdateSentencesInput,
+  SentenceCustom,
 } from './Translate.types';
 import { Entity, Phrase, Word } from '../../type-graphql/models';
 
@@ -33,6 +35,15 @@ export class TranslateResolver {
     @Arg('entity') entity: string,
   ) {
     return await this.service.translatePhrase(phrase, entity, ctx);
+  }
+
+  @Mutation((returns) => SentenceCustom)
+  async translateSentence(
+    @Ctx() ctx: Context,
+    @Arg('sentence') sentence: string,
+    @Arg('entity') entity: string,
+  ) {
+    return await this.service.translateSentence(sentence, entity, ctx);
   }
 
   @Mutation((returns) => Boolean)
@@ -73,6 +84,11 @@ export class TranslateResolver {
   @Mutation((returns) => Boolean)
   async updatePhraseByEntity(@Arg('data') data: UpdatePhrasesInput) {
     return this.service.updatePhraseByEntity(data);
+  }
+
+  @Mutation((returns) => Boolean)
+  async updateSentencesByEntity(@Arg('data') data: UpdateSentencesInput) {
+    return this.service.updateSentencesByEntity(data);
   }
 
   @Query((returns) => Number)

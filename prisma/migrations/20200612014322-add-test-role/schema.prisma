@@ -9,7 +9,7 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model User {
@@ -44,7 +44,6 @@ enum Role {
   ADMIN
   TEST
   STANDARD
-  SUPER
 }
 
 enum PartOfSpeech {
@@ -61,12 +60,12 @@ enum PartOfSpeech {
 }
 
 model Irrverb {
-  id       Int      @default(autoincrement()) @id
-  form1EN  String
-  form2EN  String
-  form3EN  String
-  ru       String
-  entities Entity[]
+  id      Int     @default(autoincrement()) @id
+  form1EN String
+  form2EN String
+  form3EN String
+  ru      String
+  Entity  Entity?
 }
 
 model Entity {
@@ -122,8 +121,6 @@ model Phrase {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectPhrases")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model Sentence {
@@ -132,8 +129,6 @@ model Sentence {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectSentences")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model MobileApp {

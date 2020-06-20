@@ -1,0 +1,22 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Word",
+      "field": "entities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Word",
+      "field": "entity"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Word",
+      "field": "entityId"
+    }
+  ]
+}

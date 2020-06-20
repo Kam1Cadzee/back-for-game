@@ -1,0 +1,61 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateField",
+      "model": "Phrase",
+      "field": "entities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Phrase",
+      "field": "Entity"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Phrase",
+      "field": "entityId"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Phrase",
+          "field": "phrase"
+        },
+        "directive": "unique"
+      }
+    },
+    {
+      "tag": "CreateField",
+      "model": "Sentence",
+      "field": "entities",
+      "type": "Entity",
+      "arity": "List"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Sentence",
+      "field": "Entity"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Sentence",
+      "field": "entityId"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Sentence",
+          "field": "sentence"
+        },
+        "directive": "unique"
+      }
+    }
+  ]
+}

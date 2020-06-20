@@ -9,7 +9,7 @@ generator typegraphql {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model User {
@@ -122,8 +122,6 @@ model Phrase {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectPhrases")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model Sentence {
@@ -132,8 +130,6 @@ model Sentence {
   ru                 String
   entities           Entity[]
   disconnectEntities Entity[] @relation("disconnectSentences")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @default(now())
 }
 
 model MobileApp {
