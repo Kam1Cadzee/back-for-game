@@ -1,7 +1,7 @@
-import { verify } from "jsonwebtoken";
-import { Request } from "express";
-import config from "../config";
-import {Role} from '../type-graphql/enums';
+import { verify } from 'jsonwebtoken';
+import { Request } from 'express';
+import config from '../config';
+import { Role } from '../type-graphql/enums';
 
 interface Token {
   userId: number;
@@ -9,16 +9,17 @@ interface Token {
 }
 const failObj: Token = {
   role: null,
-  userId: null
+  userId: null,
 };
 
 export function getContentFromToken(req: Request) {
-  const Authorization = req.get("Authorization");
+  const Authorization = req.get('Authorization');
+
   if (Authorization) {
-    const token = Authorization.replace("Bearer ", "");
+    const token = Authorization.replace('Bearer ', '');
     try {
       const verifiedToken = verify(token, config.app_secret) as Token;
-      if(verifiedToken) {
+      if (verifiedToken) {
         return {
           userId: +verifiedToken.userId,
           role: verifiedToken.role,
