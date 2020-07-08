@@ -120,7 +120,7 @@ export class TranslateService {
     const res = await this.prisma.word.findOne({
       where: {
         AnotherUser_firstname_lastname_key: {
-          en: word,
+          en: word.toLowerCase(),
           userId: config.superUser,
         },
       },
@@ -139,7 +139,7 @@ export class TranslateService {
     }
     throwErrorIfTestUser(ctx.role, 'Sorry,No available for test user');
     let count = 0;
-    let result = 'proba' || (await serviceABBYY.miniCard(word));
+    let result = await serviceABBYY.miniCard(word);
     count += 1;
     if (result === null) {
       result = await azureService.translate(word);
@@ -638,6 +638,7 @@ export class TranslateService {
           },
           update: {
             type: t.type,
+            updatedAt: new Date(),
           },
           select: {
             id: true,
@@ -655,6 +656,7 @@ export class TranslateService {
         },
         data: {
           type: w.type,
+          updatedAt: new Date(),
           disconnectTranslate: {
             set: w.disconnectTranslate.map((d) => ({ id: d })),
           },
