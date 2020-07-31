@@ -21,7 +21,10 @@ import { Context } from '../../context';
 import { PartOfSpeech } from '../../type-graphql/enums';
 import { Entity } from '../../type-graphql/models';
 import config from '../../config';
-import { throwErrorIfTestUser } from '../../utils/testRoleError';
+import {
+  throwErrorIfTestUser,
+  throwErrorIfOverCountQuery,
+} from '../../utils/testRoleError';
 
 const includeEntity = {
   disconnectWords: {
@@ -80,7 +83,14 @@ export class TranslateService {
         phrase,
       };
     }
+    throwErrorIfOverCountQuery({
+      prisma: ctx.prisma,
+      role: ctx.role,
+      userId: ctx.userId,
+    });
+
     const result = await this.translateText(phrase, ctx.role);
+    this.incrementCountUser(ctx.userId, 1);
     this.createPhraseForSuperUser(result, phrase, entity);
     return {
       ru: result,
@@ -103,7 +113,15 @@ export class TranslateService {
         sentence,
       };
     }
+
+    throwErrorIfOverCountQuery({
+      prisma: ctx.prisma,
+      role: ctx.role,
+      userId: ctx.userId,
+    });
+
     const result = await this.translateText(sentence, ctx.role);
+    this.incrementCountUser(ctx.userId, 1);
     this.createSentenceForSuperUser(result, sentence, entity);
     return {
       ru: result,
@@ -138,6 +156,11 @@ export class TranslateService {
       return res;
     }
     throwErrorIfTestUser(ctx.role, 'Sorry,No available for test user');
+    await throwErrorIfOverCountQuery({
+      prisma: ctx.prisma,
+      role: ctx.role,
+      userId: ctx.userId,
+    });
     let count = 0;
     let result = await serviceABBYY.miniCard(word);
     count += 1;

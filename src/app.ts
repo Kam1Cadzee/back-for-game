@@ -32,13 +32,14 @@ logger.stream = {
 
 const myPlugin = {
   requestDidStart(requestContext) {
-    if(requestContext.request.operationName === 'IntrospectionQuery') return;
-    let [typeQuery, name] = requestContext.request.query
-      .split('{');
+    if (requestContext.request.operationName === 'IntrospectionQuery') return;
+    let [typeQuery, name] = requestContext.request.query.split('{');
     name = name.match(/[a-z]+/)[0];
     const userId = requestContext.context.userId || 'null';
     logger.info(
-      `userId: ${userId}, query: ${typeQuery}, operationName: ${name}, variables: ${JSON.stringify(requestContext.request.variables)}`,
+      `userId: ${userId}, query: ${typeQuery}, operationName: ${name}, variables: ${JSON.stringify(
+        requestContext.request.variables,
+      )}`,
     );
   },
 };
@@ -58,6 +59,7 @@ const startServer = async () => {
     playground: isDevelopment,
     plugins: [myPlugin],
     formatError: (err) => {
+      console.log(err);
       const message: any = {
         message: err.message,
         code: err.extensions.code,
