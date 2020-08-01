@@ -91,6 +91,8 @@ const startServer = async () => {
   );
 };
 
+startServer();
+
 async function bootstrap() {
   const schema = await buildSchema({
     resolvers: [
@@ -102,5 +104,3 @@ async function bootstrap() {
   });
   return schema;
 }
-
-export default startServer;

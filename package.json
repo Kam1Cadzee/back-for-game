@@ -4,9 +4,9 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "npm run generate:prisma && ts-node src/index",
-    "watch": "nodemon src/index.ts",
-    "dev": "ts-node  src/index",
+    "start": "npm run generate:prisma && ts-node src/app",
+    "watch": "nodemon src/app.ts",
+    "dev": "ts-node  src/app",
     "generate": "npm run generate:prisma && npm run generate:types",
     "generate:prisma": "npx prisma generate",
     "generate:types": "ts-node-dev --transpileOnly generatedTypes.ts",
