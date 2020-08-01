@@ -11,14 +11,14 @@ const start = async () => {
       'TranslateCrudResolver',
       {
         file: 'User',
-        fields: ['password', 'createdAt']
+        fields: ['password', 'createdAt'],
       },
       {
         file: 'UserCreateInput',
-        fields: ['createdAt']
-      }
-    ]
+        fields: ['createdAt'],
+      },
+    ],
   });
 };
 
-start();
+export default start;

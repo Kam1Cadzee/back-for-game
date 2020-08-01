@@ -4,7 +4,7 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "npm run generate:prisma && npm run config:types && ts-node src/app",
+    "start": "npm run generate:prisma && ts-node src/app",
     "watch": "nodemon src/app.ts",
     "dev": "ts-node  src/app",
     "generate": "npm run generate:prisma && npm run generate:types",
