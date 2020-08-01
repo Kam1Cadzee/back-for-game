@@ -5,3 +5,5 @@ const start = async () => {
   await preStart();
   await startServer();
 };
+
+start();
