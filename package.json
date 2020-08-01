@@ -4,13 +4,13 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "start": "npm run generate:prisma && ts-node src/index",
+    "start": "npm run generate:prisma && npm run config:types && ts-node src/index",
     "watch": "nodemon src/index.ts",
     "dev": "ts-node  src/index",
     "generate": "npm run generate:prisma && npm run generate:types",
     "generate:prisma": "npx prisma generate",
     "generate:types": "ts-node-dev --transpileOnly generatedTypes.ts",
-    "config:types": "ts-node-dev --transpileOnly ./src/preStart.ts",
+    "config:types": "ts-node-dev ./src/preStart.ts",
     "migrate": "npm run migrate:save && npm run migrate:up",
     "migrate:save": "npx prisma migrate save --experimental",
     "migrate:up": "npx prisma migrate up --experimental"
