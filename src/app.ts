@@ -12,7 +12,6 @@ import cors from 'cors';
 import serviceABBYY from './service/abbyyService';
 import morgan from 'morgan';
 import winston from 'winston';
-import preStart from './preStart';
 
 const logger = winston.createLogger({
   transports: [
@@ -46,7 +45,6 @@ const myPlugin = {
 };
 
 const startServer = async () => {
-  await preStart();
   const middleware = applyMiddleware(await bootstrap(), permissions);
   const resultABBYY = await serviceABBYY.auth();
 
@@ -93,8 +91,6 @@ const startServer = async () => {
   );
 };
 
-startServer();
-
 async function bootstrap() {
   const schema = await buildSchema({
     resolvers: [
@@ -106,3 +102,5 @@ async function bootstrap() {
   });
   return schema;
 }
+
+export default startServer;
