@@ -1,0 +1,10 @@
+export { Entity } from "./Entity";
+export { Irrverb } from "./Irrverb";
+export { MobileApp } from "./MobileApp";
+export { PartOfSpeechDesc } from "./PartOfSpeechDesc";
+export { Phrase } from "./Phrase";
+export { Sentence } from "./Sentence";
+export { SettingRole } from "./SettingRole";
+export { Translate } from "./Translate";
+export { User } from "./User";
+export { Word } from "./Word";

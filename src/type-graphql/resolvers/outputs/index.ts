@@ -1,0 +1,12 @@
+export { AggregateEntity } from "./AggregateEntity";
+export { AggregateIrrverb } from "./AggregateIrrverb";
+export { AggregateMobileApp } from "./AggregateMobileApp";
+export { AggregatePartOfSpeechDesc } from "./AggregatePartOfSpeechDesc";
+export { AggregatePhrase } from "./AggregatePhrase";
+export { AggregateSentence } from "./AggregateSentence";
+export { AggregateSettingRole } from "./AggregateSettingRole";
+export { AggregateTranslate } from "./AggregateTranslate";
+export { AggregateUser } from "./AggregateUser";
+export { AggregateWord } from "./AggregateWord";
+export { BatchPayload } from "./BatchPayload";
+export * from "./args";

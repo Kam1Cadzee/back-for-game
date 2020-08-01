@@ -1,0 +1,14 @@
+export { EntityRelationsResolver } from "./Entity/EntityRelationsResolver";
+export * from "./Entity/args";
+export { IrrverbRelationsResolver } from "./Irrverb/IrrverbRelationsResolver";
+export * from "./Irrverb/args";
+export { PhraseRelationsResolver } from "./Phrase/PhraseRelationsResolver";
+export * from "./Phrase/args";
+export { SentenceRelationsResolver } from "./Sentence/SentenceRelationsResolver";
+export * from "./Sentence/args";
+export { TranslateRelationsResolver } from "./Translate/TranslateRelationsResolver";
+export * from "./Translate/args";
+export { UserRelationsResolver } from "./User/UserRelationsResolver";
+export * from "./User/args";
+export { WordRelationsResolver } from "./Word/WordRelationsResolver";
+export * from "./Word/args";
